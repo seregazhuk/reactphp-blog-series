@@ -18,6 +18,7 @@ $promise->done(function($data){
 $progress = 1;
 $loop->addPeriodicTimer(1, function(TimerInterface $timer) use ($deferred, &$progress){
     $deferred->notify($progress++);
+
     if($progress > 10) {
         $timer->cancel();
         $deferred->resolve('Finished');
