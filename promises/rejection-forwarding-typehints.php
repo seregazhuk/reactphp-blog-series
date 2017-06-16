@@ -10,13 +10,14 @@ $deferred->promise()
 
         throw new InvalidArgumentException('some ' . $data);
     })
-    ->otherwise(function(InvalidArgumentException $e){          // <-- This handler will be skipped
-        $message = $e->getMessage();                            // because in the previous promise
-        echo $message . PHP_EOL;                                // we have thrown a LogicException
+    ->otherwise(function(InvalidArgumentException $e){
+        $message = $e->getMessage();
+        echo $message . PHP_EOL;
 
         throw new BadFunctionCallException(strtoupper($message));
-    })->otherwise(function(InvalidArgumentException $e){
-        echo $e->getMessage() . PHP_EOL;
-    });
+    })
+    ->otherwise(function(InvalidArgumentException $e){   // <-- This handler will be skipped
+        echo $e->getMessage() . PHP_EOL;                 // because in the previous promise
+    });                                                  // we have thrown a LogicException
 
 $deferred->reject('error');

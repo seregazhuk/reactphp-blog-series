@@ -13,7 +13,8 @@ $deferred->promise()
         $message = $e->getMessage();
         echo $message . PHP_EOL;
         throw new Exception(strtoupper($message));
-    })->otherwise(function(\Exception $e){
+    })
+    ->otherwise(function(\Exception $e){
         echo $e->getMessage() . PHP_EOL;
     });
 
