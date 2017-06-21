@@ -5,6 +5,7 @@ require  '../vendor/autoload.php';
 use React\Socket\ConnectionInterface;
 
 class ConnectionsPool {
+
     /** @var SplObjectStorage  */
     protected $connections;
 
@@ -18,6 +19,8 @@ class ConnectionsPool {
         $connection->write("Hi\n");
         $this->initEvents($connection);
         $this->connections->attach($connection);
+
+        $this->sendAll("New user enters the chat\n", $connection);
     }
 
     /**
@@ -26,19 +29,29 @@ class ConnectionsPool {
     protected function initEvents(ConnectionInterface $connection)
     {
         // On receiving the data we loop through other connections
-        // end write this data to them
+        // from the pool and write this data to them
         $connection->on('data', function ($data) use ($connection) {
-            foreach ($this->connections as $conn) {
-                if ($conn == $connection) continue;
-
-                $conn->write($data);
-            }
+            $this->sendAll($data, $connection);
         });
 
-        // When connection closes detach it from the loop
-        $connection->on('close', function($connection){
+        // When connection closes detach it from the pool
+        $connection->on('close', function() use ($connection){
             $this->connections->detach($connection);
+            $this->sendAll("A user leaves the chat\n", $connection);
         });
+    }
+
+    /**
+     * Send data to all connections from the pool except
+     * the specified one.
+     *
+     * @param mixed $data
+     * @param ConnectionInterface $except
+     */
+    protected function sendAll($data, ConnectionInterface $except) {
+        foreach ($this->connections as $conn) {
+            if ($conn != $except) $conn->write($data);
+        }
     }
 }
 
@@ -50,4 +63,7 @@ $pool = new ConnectionsPool();
 $socket->on('connection', function(ConnectionInterface $connection) use ($pool){
     $pool->add($connection);
 });
+
+echo "Listening on {$socket->getAddress()}\n";
+
 $loop->run();
