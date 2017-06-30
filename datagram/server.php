@@ -16,7 +16,7 @@ $factory->createServer($address)
             });
         },
         function($error) {
-            echo 'ERROR: ' . $error->getMessage() . PHP_EOL;
+            echo "ERROR: {$error->getMessage()}\n";
         });
 
 echo "Listening on $address\n";
