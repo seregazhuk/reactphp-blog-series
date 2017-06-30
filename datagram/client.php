@@ -22,7 +22,7 @@ $factory->createClient('localhost:1234')
             });
         },
         function($error) {
-            echo 'ERROR: ' . $error->getMessage() . PHP_EOL;
+            echo "ERROR: {$error->getMessage()}\n";
         });
 
 $loop->run();
