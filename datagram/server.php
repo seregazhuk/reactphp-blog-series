@@ -7,12 +7,17 @@ $factory = new React\Datagram\Factory($loop);
 $address = 'localhost:1234';
 
 $factory->createServer($address)
-    ->then(function (React\Datagram\Socket $server) {
-        $server->on('message', function($message, $address, $server) {
-            $server->send('hello ' . $address . '! echo: ' . $message, $address);
-            echo 'client ' . $address . ': ' . $message . PHP_EOL;
-    });
-});
+    ->then(
+        function (React\Datagram\Socket $server) {
+            $server->on(
+                'message', function ($message, $address, $server) {
+                $server->send('hello ' . $address . '! echo: ' . $message, $address);
+                echo 'client ' . $address . ': ' . $message . PHP_EOL;
+            });
+        },
+        function($error) {
+            echo 'ERROR: ' . $error->getMessage() . PHP_EOL;
+        });
 
 echo "Listening on $address\n";
 $loop->run();
