@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
 $factory = new React\Datagram\Factory($loop);
@@ -14,7 +14,7 @@ $factory->createServer($address)
                 echo 'client ' . $address . ': ' . $message . PHP_EOL;
             });
         },
-        function($error) {
+        function(Exception $error) {
             echo "ERROR: {$error->getMessage()}\n";
         });
 
