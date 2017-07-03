@@ -10,7 +10,6 @@ $factory->createClient('localhost:1234')
     ->then(
         function (React\Datagram\Socket $client) use ($stdin) {
             $client->on('message', function($message){
-                var_dump($message);
                 echo $message . "\n";
             });
 
