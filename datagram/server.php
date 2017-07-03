@@ -11,7 +11,7 @@ $factory->createServer($address)
         function (React\Datagram\Socket $server) {
             $server->on(
                 'message', function ($message, $address, $server) {
-                $server->send('hello ' . $address . '! echo: ' . $message, $address);
+                $server->send('hello ' . $address . '! echo: ' . $message);
                 echo 'client ' . $address . ': ' . $message . PHP_EOL;
             });
         },

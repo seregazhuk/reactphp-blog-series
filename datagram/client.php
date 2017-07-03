@@ -3,8 +3,6 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
-
-$factory = new React\Dns\Resolver\Factory();
 $factory = new React\Datagram\Factory($loop);
 
 $stdin = new \React\Stream\ReadableResourceStream(STDIN, $loop);
