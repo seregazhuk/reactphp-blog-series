@@ -6,17 +6,12 @@ $loop = React\EventLoop\Factory::create();
 $factory = new React\Datagram\Factory($loop);
 
 $stdin = new \React\Stream\ReadableResourceStream(STDIN, $loop);
-$stdout = new \React\Stream\WritableResourceStream(STDOUT, $loop);
 
 $factory->createClient('localhost:1234')
     ->then(
-        function (React\Datagram\Socket $client) use ($stdin, $stdout) {
+        function (React\Datagram\Socket $client) use ($stdin) {
             $stdin->on('data', function($data) use ($client) {
-                $client->send($data);
-            });
-
-            $client->on('message', function($message) use ($stdout) {
-                $stdout->write($message);
+                $client->send(trim($data));
             });
         },
         function($error) {

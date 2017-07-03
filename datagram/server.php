@@ -9,9 +9,8 @@ $address = 'localhost:1234';
 $factory->createServer($address)
     ->then(
         function (React\Datagram\Socket $server) {
-            $server->on(
-                'message', function ($message, $address, $server) {
-                $server->send('hello ' . $address . '! echo: ' . $message);
+            $server->on('message', function ($message, $address, $server) {
+                $server->send($address . ' echo: ' . $message, $address);
                 echo 'client ' . $address . ': ' . $message . PHP_EOL;
             });
         },
