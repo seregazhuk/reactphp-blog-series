@@ -39,9 +39,7 @@ class UdpChatServer
 
     protected function removeClient($address)
     {
-        if (!array_key_exists($address, $this->clients)) return;
-
-        $name = $this->clients[$address];
+        $name = $this->clients[$address] ?? '';
 
         unset($this->clients[$address]);
 
@@ -59,7 +57,7 @@ class UdpChatServer
 
     protected function sendMessage($message, $address)
     {
-        $name = array_key_exists($address, $this->clients) ? $this->clients[$address] : '';
+        $name = $this->clients[$address] ?? '';
 
         $this->broadcast("$name: $message", $address);
     }
