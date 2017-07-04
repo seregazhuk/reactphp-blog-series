@@ -1,46 +1,89 @@
 <?php
 
+use React\Datagram\Socket;
+use React\EventLoop\LoopInterface;
+use React\Stream\ReadableResourceStream;
+use React\Stream\ReadableStreamInterface;
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$loop = React\EventLoop\Factory::create();
-$factory = new React\Datagram\Factory($loop);
+class UdpChatClient
+{
+    /** @var  LoopInterface */
+    protected $loop;
 
-$stdin = new \React\Stream\ReadableResourceStream(STDIN, $loop);
+    /** @var ReadableStreamInterface  */
+    protected $stdin;
 
-$factory->createClient('localhost:1234')
-    ->then(
-        function (React\Datagram\Socket $client) use ($stdin, $loop) {
-            $name = '';
-            echo "Enter your name: ";
+    /** @var  Socket */
+    protected $client;
 
-            $client->on('message', function($message){
-                echo $message . "\n";
-            });
+    protected $name = '';
 
-            $client->on('close', function() use ($loop) {
-                $loop->stop();
-            });
+    public function run()
+    {
+        $this->loop = React\EventLoop\Factory::create();
+        $factory = new React\Datagram\Factory($this->loop);
 
-            $stdin->on('data', function($data) use ($client, &$name, $loop) {
-                $data = trim($data);
+        $this->stdin = new ReadableResourceStream(STDIN, $this->loop);
+        $this->stdin->on('data', [$this, 'processInput']);
 
-                if(empty($name)) {
-                    $name = $data;
-                    $client->send(json_encode(['message' => '', 'name' => $name, 'type' => 'enter']));
-                    return;
-                }
+        $factory->createClient('localhost:1234')
+            ->then(
+                [$this, 'initClient'],
+                function (Exception $error) {
+                    echo "ERROR: {$error->getMessage()}\n";
+                });
 
-                if($data == ':exit') {
-                    $client->send(json_encode(['name' => $name, 'message' => '', 'type' => 'leave']));
-                    $client->end();
-                }
+        $this->loop->run();
+    }
 
-                $message = json_encode(['message' => $data, 'name' => $name, 'type' => 'message']);
-                $client->send($message);
-            });
-        },
-        function(Exception $error) {
-            echo "ERROR: {$error->getMessage()}\n";
+    public function initClient(Socket $client)
+    {
+        $this->client = $client;
+        $this->initClientEvents();
+        echo "Enter your name: ";
+    }
+
+    protected function initClientEvents()
+    {
+        $this->client->on('message', function ($message) {
+            echo $message . "\n";
         });
 
-$loop->run();
+        $this->client->on('close', function () {
+            $this->loop->stop();
+        });
+    }
+
+    public function processInput($data)
+    {
+        $data = trim($data);
+
+        if (empty($this->name)) {
+            $this->name = $data;
+            $this->sendData('', 'enter');
+            return;
+        }
+
+        if ($data == ':exit') {
+            $this->sendData('', 'leave');
+            $this->client->end();
+        }
+
+        $this->sendData($data);
+    }
+
+    protected function sendData($message, $type = 'message')
+    {
+        $data = [
+            'message' => $message,
+            'name'    => $this->name,
+            'type'    => $type,
+        ];
+
+        $this->client->send(json_encode($data));
+    }
+}
+
+(new UdpChatClient())->run();
