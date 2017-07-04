@@ -41,12 +41,7 @@ class UdpChatClient
     public function initClient(Socket $client)
     {
         $this->client = $client;
-        $this->initClientEvents();
-        echo "Enter your name: ";
-    }
 
-    protected function initClientEvents()
-    {
         $this->client->on('message', function ($message) {
             echo $message . "\n";
         });
@@ -54,6 +49,8 @@ class UdpChatClient
         $this->client->on('close', function () {
             $this->loop->stop();
         });
+
+        echo "Enter your name: ";
     }
 
     public function processInput($data)
@@ -69,6 +66,7 @@ class UdpChatClient
         if ($data == ':exit') {
             $this->sendData('', 'leave');
             $this->client->end();
+            return;
         }
 
         $this->sendData($data);
@@ -77,9 +75,9 @@ class UdpChatClient
     protected function sendData($message, $type = 'message')
     {
         $data = [
-            'message' => $message,
-            'name'    => $this->name,
             'type'    => $type,
+            'name'    => $this->name,
+            'message' => $message,
         ];
 
         $this->client->send(json_encode($data));

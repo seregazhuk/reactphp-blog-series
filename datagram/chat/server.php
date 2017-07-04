@@ -25,7 +25,7 @@ class UdpChatServer {
             return;
         }
 
-        $this->broadcast($data['message'], $address, true);
+        $this->sendMessage($data['message'], $address);
     }
 
     public function addClient($name, $address)
@@ -50,12 +50,10 @@ class UdpChatServer {
         $this->broadcast("$name leaves chat");
     }
 
-    public function broadcast($message,  $except = null, $showName = false)
+    public function broadcast($message, $except = null)
     {
         foreach ($this->clients as $address => $name) {
             if($address == $except) continue;
-
-            $message = $showName ? "$name: $message" : $message;
 
             $this->socket->send($message, $address);
         }
@@ -79,6 +77,14 @@ class UdpChatServer {
 
         echo "Listening on $address\n";
         $loop->run();
+    }
+
+    protected function sendMessage($message, $address)
+    {
+        $name = array_key_exists($address, $this->clients) ?
+            $this->clients[$address] : '';
+
+        $this->broadcast("$name: $message", $address);
     }
 }
 
