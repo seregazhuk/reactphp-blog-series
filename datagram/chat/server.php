@@ -30,9 +30,9 @@ class UdpChatServer
 
     protected function addClient($name, $address)
     {
-        if (!array_key_exists($address, $this->clients)) {
-            $this->clients[$address] = $name;
-        }
+        if (array_key_exists($address, $this->clients)) return;
+
+        $this->clients[$address] = $name;
 
         $this->broadcast("$name enters chat", $address);
     }
