@@ -2,11 +2,6 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$loop = React\EventLoop\Factory::create();
-$factory = new React\Datagram\Factory($loop);
-
-$address = 'localhost:1234';
-
 class UdpChatServer {
 
     protected $clients = [];
@@ -16,27 +11,24 @@ class UdpChatServer {
      */
     protected $socket;
 
-    public function __construct(\React\Datagram\Socket $socket)
-    {
-        $this->socket = $socket;
-    }
-
     public function process($data, $address)
     {
         $data = json_decode($data, true);
 
         if($data['type'] == 'enter') {
-            $this->add($data['name'], $address); return;
+            $this->addClient($data['name'], $address);
+            return;
         }
 
         if($data['type'] == 'leave') {
-            $this->remove($address); return;
+            $this->removeClient($address);
+            return;
         }
 
-        $this->broadcast($data['message'], $address);
+        $this->broadcast($data['message'], $address, true);
     }
 
-    public function add($name, $address)
+    public function addClient($name, $address)
     {
         if(!array_key_exists($address, $this->clients)) {
             $this->clients[$address] = $name;
@@ -47,7 +39,7 @@ class UdpChatServer {
         return $this;
     }
 
-    public function remove($address)
+    public function removeClient($address)
     {
         if(!array_key_exists($address, $this->clients)) return;
 
@@ -58,26 +50,37 @@ class UdpChatServer {
         $this->broadcast("$name leaves chat");
     }
 
-    public function broadcast($message, $except = null)
+    public function broadcast($message,  $except = null, $showName = false)
     {
         foreach ($this->clients as $address => $name) {
             if($address == $except) continue;
 
+            $message = $showName ? "$name: $message" : $message;
+
             $this->socket->send($message, $address);
         }
     }
+
+    public function run()
+    {
+        $loop = React\EventLoop\Factory::create();
+        $factory = new React\Datagram\Factory($loop);
+        $address = 'localhost:1234';
+
+        $factory->createServer($address)
+            ->then(
+                function (React\Datagram\Socket $server) {
+                    $this->socket = $server;
+                    $server->on('message', [$this, 'process']);
+                },
+                function(Exception $error) {
+                    echo "ERROR: {$error->getMessage()}\n";
+                });
+
+        echo "Listening on $address\n";
+        $loop->run();
+    }
 }
 
-$factory->createServer($address)
-    ->then(
-        function (React\Datagram\Socket $server) {
-            $udpServer = new UdpChatServer($server);
+(new UdpChatServer())->run();
 
-            $server->on('message', [$udpServer, 'process']);
-        },
-        function(Exception $error) {
-            echo "ERROR: {$error->getMessage()}\n";
-        });
-
-echo "Listening on $address\n";
-$loop->run();
