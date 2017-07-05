@@ -72,10 +72,10 @@ class UdpChatServer
                 function (React\Datagram\Socket $server) {
                     $this->socket = $server;
                     $server->on('message', [$this, 'process']);
-                }, function (Exception $error) {
-                echo "ERROR: {$error->getMessage()}\n";
-            }
-            );
+                },
+                function (Exception $error) {
+                    echo "ERROR: {$error->getMessage()}\n";
+                });
 
         echo "Listening on $address\n";
         $loop->run();
