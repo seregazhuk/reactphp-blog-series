@@ -1,22 +1,17 @@
 <?php
 
-use React\Datagram\Socket;
-use React\EventLoop\LoopInterface;
-use React\Stream\ReadableResourceStream;
-use React\Stream\ReadableStreamInterface;
-
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 class UdpChatClient
 {
-    /** @var  LoopInterface */
+    /** @var  React\EventLoop\LoopInterface; */
     protected $loop;
 
-    /** @var ReadableStreamInterface  */
+    /** @var React\Stream\ReadableStreamInterface;  */
     protected $stdin;
 
-    /** @var  Socket */
-    protected $client;
+    /** @var  React\Datagram\Socket  */
+    protected $socket;
 
     protected $name = '';
 
@@ -25,7 +20,7 @@ class UdpChatClient
         $this->loop = React\EventLoop\Factory::create();
         $factory = new React\Datagram\Factory($this->loop);
 
-        $this->stdin = new ReadableResourceStream(STDIN, $this->loop);
+        $this->stdin = new React\Stream\ReadableResourceStream(STDIN, $this->loop);
         $this->stdin->on('data', [$this, 'processInput']);
 
         $factory->createClient('localhost:1234')
@@ -38,15 +33,15 @@ class UdpChatClient
         $this->loop->run();
     }
 
-    public function initClient(Socket $client)
+    public function initClient(React\Datagram\Socket $client)
     {
-        $this->client = $client;
+        $this->socket = $client;
 
-        $this->client->on('message', function ($message) {
+        $this->socket->on('message', function ($message) {
             echo $message . "\n";
         });
 
-        $this->client->on('close', function () {
+        $this->socket->on('close', function () {
             $this->loop->stop();
         });
 
@@ -65,7 +60,7 @@ class UdpChatClient
 
         if ($data == ':exit') {
             $this->sendData('', 'leave');
-            $this->client->end();
+            $this->socket->end();
             return;
         }
 
@@ -80,7 +75,7 @@ class UdpChatClient
             'message' => $message,
         ];
 
-        $this->client->send(json_encode($data));
+        $this->socket->send(json_encode($data));
     }
 }
 
