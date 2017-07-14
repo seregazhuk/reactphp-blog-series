@@ -68,7 +68,8 @@ class UdpChatServer
         $factory = new React\Datagram\Factory($loop);
         $address = 'localhost:1234';
 
-        $factory->createServer($address)->then(
+        $factory->createServer($address)
+            ->then(
                 function (React\Datagram\Socket $server) {
                     $this->socket = $server;
                     $server->on('message', [$this, 'process']);
