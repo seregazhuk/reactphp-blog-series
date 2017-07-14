@@ -1,6 +1,5 @@
 <?php
 
-
 require '../vendor/autoload.php';
 
 use React\Http\Server;
