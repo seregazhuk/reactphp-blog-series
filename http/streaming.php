@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 $loop = Factory::create();
 
 $server = new Server(function (ServerRequestInterface $request) use ($loop) {
-    $video = new \React\Stream\ReadableResourceStream(fopen('cat.mp4', 'r'), $loop);
+    $video = new \React\Stream\ReadableResourceStream(fopen('bunny.mp4', 'r'), $loop);
     return new Response(200, ['Content-Type' => 'video/mp4'], $video);
 });
 
