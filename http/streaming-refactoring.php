@@ -9,7 +9,8 @@ use React\EventLoop\LoopInterface;
 use React\Stream\ReadableResourceStream;
 use Psr\Http\Message\ServerRequestInterface;
 
-class VideoStreaming {
+class VideoStreaming
+{
 
     /**
      * @var LoopInterface
@@ -30,53 +31,41 @@ class VideoStreaming {
      */
     function __invoke(ServerRequestInterface $request)
     {
-        $file = $this->getFileName($request);
-        if(empty($file)) {
+        $file = $this->getFilePath($request);
+        if (empty($file)) {
             return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming');
         }
 
-        try {
-            return $this->makeStreamResponse($file);
-        } catch (RuntimeException $exception) {
-            return new Response(404, ['Content-Type' => 'text/plain'], $exception->getMessage());
+        return $this->makeStreamResponse($file);
+    }
+
+    /**
+     * @param string $filePath
+     * @return Response
+     */
+    protected function makeStreamResponse($filePath)
+    {
+        if (!file_exists($filePath)) {
+            return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
         }
+
+        $stream = new ReadableResourceStream(fopen($filePath, 'r'), $this->eventLoop);
+
+        return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
     }
 
     /**
      * @param ServerRequestInterface $request
      * @return string
      */
-    protected function getFileName(ServerRequestInterface $request)
+    protected function getFilePath(ServerRequestInterface $request)
     {
-        $params = $request->getQueryParams();
-        return $params['file'] ?? '';
+        $file = $request->getQueryParams()['file'] ?? '';
+
+        if (empty($file)) return '';
+
+        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
     }
-
-    /**
-     * @param string $fileName
-     * @return Response
-     */
-    protected function makeStreamResponse($fileName)
-    {
-        $filePath = $this->getVideoPath($fileName);
-
-        if(!file_exists($filePath)) {
-            throw new RuntimeException("Video $fileName doesn't exist on server.");
-        }
-
-        $stream = new ReadableResourceStream(fopen($filePath, 'r'), $this->eventLoop);
-        return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
-    }
-
-    /**
-     * @param string $fileName
-     * @return string
-     */
-    protected function getVideoPath($fileName)
-    {
-        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $fileName;
-    }
-
 }
 
 $loop = Factory::create();
