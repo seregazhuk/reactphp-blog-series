@@ -33,17 +33,17 @@ class VideoStreaming
     {
         $file = $this->getFilePath($request);
         if (empty($file)) {
-            return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming');
+            return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
         }
 
-        return $this->makeStreamResponse($file);
+        return $this->makeResponseFromFile($file);
     }
 
     /**
      * @param string $filePath
      * @return Response
      */
-    protected function makeStreamResponse($filePath)
+    protected function makeResponseFromFile($filePath)
     {
         if (!file_exists($filePath)) {
             return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");

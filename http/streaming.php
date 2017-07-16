@@ -14,7 +14,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     $file = $params['video'] ?? '';
 
     if(empty($file)) {
-        return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming');
+        return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
     }
 
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
