@@ -33,17 +33,17 @@ class VideoStreaming
     {
         $file = $this->getFilePath($request);
         if (empty($file)) {
-            return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming');
+            return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
         }
 
-        return $this->makeStreamResponse($file);
+        return $this->makeResponseFromFile($file);
     }
 
     /**
      * @param string $filePath
      * @return Response
      */
-    protected function makeStreamResponse($filePath)
+    protected function makeResponseFromFile($filePath)
     {
         if (!file_exists($filePath)) {
             return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
@@ -76,5 +76,5 @@ $server = new Server($videoStreaming);
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
 $server->listen($socket);
 
-echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . PHP_EOL;
+echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n";
 $loop->run();

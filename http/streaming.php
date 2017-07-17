@@ -14,7 +14,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     $file = $params['video'] ?? '';
 
     if(empty($file)) {
-        return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming');
+        return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
     }
 
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
@@ -31,5 +31,5 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
 $server->listen($socket);
 
-echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . PHP_EOL;
+echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n";
 $loop->run();
