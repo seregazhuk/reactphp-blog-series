@@ -64,7 +64,7 @@ class VideoStreaming
 
         if (empty($file)) return '';
 
-        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
+        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     }
 }
 

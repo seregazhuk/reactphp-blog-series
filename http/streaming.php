@@ -17,7 +17,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
         return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming');
     }
 
-    $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
+    $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
 
     if(!file_exists($filePath)) {
         return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
