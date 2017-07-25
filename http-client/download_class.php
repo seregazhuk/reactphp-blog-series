@@ -20,50 +20,75 @@ class Downloader
      */
     private $requests = [];
 
+    /**
+     * @param LoopInterface $loop
+     */
     public function __construct(LoopInterface $loop)
     {
         $this->loop = $loop;
         $this->client = new React\HttpClient\Client($this->loop);
     }
 
+    /**
+     * @param string|array $files
+     */
     public function download($files)
     {
         $files = is_array($files) ? $files : [$files];
+
         foreach ($files as $index => $file) {
             $this->initRequest($file, $index + 1);
         }
 
+        echo str_repeat("\n", count($this->requests));
+
         $this->runRequests();
     }
 
+    /**
+     * @param string $url
+     * @param int $position
+     */
     public function initRequest($url, $position)
     {
-        $request = $this->client->request('GET', $url);
         $fileName = basename($url);
         $file = new \React\Stream\WritableResourceStream(fopen($fileName, 'w'), $this->loop);
+
+        $request = $this->client->request('GET', $url);
         $request->on('response', function (\React\HttpClient\Response $response) use ($file, $fileName, $position) {
             $size = $response->getHeaders()['Content-Length'];
-            $currentSize = 0;
-
-            $through = new \React\Stream\ThroughStream();
-            $through->on('data', function($data) use ($size, &$currentSize, $fileName, $position){
-                $currentSize += strlen($data);
-                echo str_repeat("\033[1A", $position), "$fileName: ", number_format($currentSize / $size * 100), "%", str_repeat("\n", $position);
-            });
-
-            $response->pipe($through)->pipe($file);
+            $progress = $this->getProgressStream($size, $fileName, $position);
+            $response->pipe($progress)->pipe($file);
         });
 
         $this->requests[] = $request;
     }
 
+    /**
+     * @param int $size
+     * @param string $fileName
+     * @param int $position
+     * @return \React\Stream\ThroughStream
+     */
+    protected function getProgressStream($size, $fileName, $position)
+    {
+        $currentSize = 0;
+
+        $through = new \React\Stream\ThroughStream();
+        $through->on('data', function($data) use ($size, &$currentSize, $fileName, $position){
+            $currentSize += strlen($data);
+            echo str_repeat("\033[1A", $position), "$fileName: ", number_format($currentSize / $size * 100), "%", str_repeat("\n", $position);
+        });
+
+        return $through;
+    }
+
     protected function runRequests()
     {
-        echo str_repeat("\n", count($this->requests));
-
         foreach ($this->requests as $request) {
             $request->end();
         }
+        $this->loop->run();
     }
 }
 
@@ -75,4 +100,3 @@ $files = [
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_5mb.mp4',
 ];
 (new Downloader($loop))->download($files);
-$loop->run();
