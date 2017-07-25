@@ -48,7 +48,7 @@ class Downloader
             $through = new \React\Stream\ThroughStream();
             $through->on('data', function($data) use ($size, &$currentSize, $fileName, $position){
                 $currentSize += strlen($data);
-                echo str_repeat("\033[1A", $position), "$fileName: ", number_format($currentSize / $size * 100), str_repeat("%\n", $position);
+                echo str_repeat("\033[1A", $position), "$fileName: ", number_format($currentSize / $size * 100), "%", str_repeat("\n", $position);
             });
 
             $response->pipe($through)->pipe($file);
@@ -70,9 +70,9 @@ class Downloader
 $loop = React\EventLoop\Factory::create();
 
 $files = [
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_20mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_50mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_2mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_5mb.mp4',
 ];
 (new Downloader($loop))->download($files);
 $loop->run();
