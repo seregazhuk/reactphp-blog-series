@@ -75,13 +75,13 @@ class Downloader
     {
         $currentSize = 0;
 
-        $through = new \React\Stream\ThroughStream();
-        $through->on('data', function($data) use ($size, &$currentSize, $fileName, $position){
+        $progress = new \React\Stream\ThroughStream();
+        $progress->on('data', function($data) use ($size, &$currentSize, $fileName, $position){
             $currentSize += strlen($data);
             echo str_repeat("\033[1A", $position), "$fileName: ", number_format($currentSize / $size * 100), "%", str_repeat("\n", $position);
         });
 
-        return $through;
+        return $progress;
     }
 
     protected function runRequests()
