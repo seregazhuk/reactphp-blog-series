@@ -1,19 +1,21 @@
 <?php
 
-use React\EventLoop\LoopInterface;
-
 require __DIR__ . '/../vendor/autoload.php';
+
+use React\EventLoop\LoopInterface;
+use React\HttpClient\Client;
 
 class Downloader
 {
     /**
+     * @var React\EventLoop\LoopInterface;
+     */
+    private $loop;
+
+    /**
      * @var \React\HttpClient\Client
      */
     protected $client;
-    /**
-     * @var LoopInterface
-     */
-    private $loop;
 
     /**
      * @var array
@@ -21,21 +23,20 @@ class Downloader
     private $requests = [];
 
     /**
+     * @param Client $client
      * @param LoopInterface $loop
      */
-    public function __construct(LoopInterface $loop)
+    public function __construct(Client $client, LoopInterface $loop)
     {
+        $this->client = $client;
         $this->loop = $loop;
-        $this->client = new React\HttpClient\Client($this->loop);
     }
 
     /**
      * @param string|array $files
      */
-    public function download($files)
+    public function download(array $files)
     {
-        $files = is_array($files) ? $files : [$files];
-
         foreach ($files as $index => $file) {
             $this->initRequest($file, $index + 1);
         }
@@ -93,10 +94,12 @@ class Downloader
 }
 
 $loop = React\EventLoop\Factory::create();
+$client = new React\HttpClient\Client($loop);
 
 $files = [
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_2mb.mp4',
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_5mb.mp4',
 ];
-(new Downloader($loop))->download($files);
+
+(new Downloader($client, $loop))->download($files);
