@@ -58,7 +58,14 @@ class Downloader
         $request = $this->client->request('GET', $url);
         $request->on('response', function (\React\HttpClient\Response $response) use ($file, $fileName, $position) {
             $size = $response->getHeaders()['Content-Length'];
-            $progress = $this->getProgressStream($size, $fileName, $position);
+            $currentSize = 0;
+
+            $progress = new \React\Stream\ThroughStream();
+            $progress->on('data', function($data) use ($size, &$currentSize, $fileName, $position){
+                $currentSize += strlen($data);
+                echo str_repeat("\033[1A", $position), "$fileName: ", number_format($currentSize / $size * 100), "%", str_repeat("\n", $position);
+            });
+
             $response->pipe($progress)->pipe($file);
         });
 
@@ -89,6 +96,9 @@ class Downloader
         foreach ($this->requests as $request) {
             $request->end();
         }
+
+        $this->requests = [];
+
         $this->loop->run();
     }
 }
