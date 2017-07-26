@@ -33,7 +33,7 @@ class Downloader
     }
 
     /**
-     * @param string|array $files
+     * @param array $files
      */
     public function download(array $files)
     {
