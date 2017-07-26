@@ -10,9 +10,6 @@ $request->on('response', function (\React\HttpClient\Response $response) {
     $response->on('data', function ($chunk) {
         echo $chunk;
     });
-    $response->on('end', function() {
-        echo 'DONE';
-    });
 });
 $request->on('error', function (\Exception $e) {
     echo $e;
