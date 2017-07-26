@@ -12,13 +12,13 @@ $request->on('response', function (\React\HttpClient\Response $response) use ($f
     $size = $response->getHeaders()['Content-Length'];
     $currentSize = 0;
 
-    $through = new \React\Stream\ThroughStream();
-    $through->on('data', function($data) use ($size, &$currentSize){
+    $progress = new \React\Stream\ThroughStream();
+    $progress->on('data', function($data) use ($size, &$currentSize){
         $currentSize += strlen($data);
         echo "\033[1A", "Downloading: ", number_format($currentSize / $size * 100), "%\n";
     });
 
-    $response->pipe($through)->pipe($file);
+    $response->pipe($progress)->pipe($file);
 });
 
 $request->end();
