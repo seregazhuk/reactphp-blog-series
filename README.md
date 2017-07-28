@@ -6,3 +6,4 @@ Code examples for [ReactPHP blog series](http://seregazhuk.github.io/2017/06/06/
 - [Sockets: server](http://seregazhuk.github.io/2017/06/22/reactphp-chat-server/) and  [client](http://seregazhuk.github.io/2017/06/24/reactphp-chat-client/)
 - [UDP sockets](http://seregazhuk.github.io/2017/07/05/reactphp-udp/)  
 - [Video Streaming Server](http://seregazhuk.github.io/2017/07/17/reatcphp-http-server/)
+- [Parallel files download](http://seregazhuk.github.io/2017/07/26/reactphp-http-client/)
