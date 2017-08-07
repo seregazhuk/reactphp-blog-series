@@ -10,7 +10,7 @@ $process = new Process('php -v');
 
 $process->start($loop);
 $process->stdout->on('data', function($data){
-    echo $data, "\n";
+    echo $data;
 });
 
 $process->on('exit', function($exitCode, $termSignal) {
