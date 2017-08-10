@@ -13,8 +13,13 @@ $process->stdout->on('data', function($data){
     echo $data;
 });
 
-$process->on('exit', function($exitCode, $termSignal) {
-    echo "Process exited\n";
+$loop->addTimer(3, function() use ($process) {
+    $process->terminate();
+});
+
+$process->on('exit', function() use ($loop) {
+    echo "Process exited";
+    $loop->stop();
 });
 
 $loop->run();
