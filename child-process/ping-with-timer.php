@@ -17,9 +17,8 @@ $loop->addTimer(3, function() use ($process) {
     $process->terminate();
 });
 
-$process->on('exit', function() use ($loop) {
+$process->on('exit', function() {
     echo "Process exited";
-    $loop->stop();
 });
 
 $loop->run();
