@@ -7,3 +7,4 @@ Code examples for [ReactPHP blog series](http://seregazhuk.github.io/2017/06/06/
 - [UDP sockets](http://seregazhuk.github.io/2017/07/05/reactphp-udp/)  
 - [Video Streaming Server](http://seregazhuk.github.io/2017/07/17/reatcphp-http-server/)
 - [Parallel files download](http://seregazhuk.github.io/2017/07/26/reactphp-http-client/)
+- [Managing Child Processes](http://seregazhuk.github.io/2017/08/07/reactphp-child-process/)
