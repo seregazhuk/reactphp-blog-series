@@ -8,7 +8,7 @@ use React\EventLoop\Factory;
 use Psr\Http\Message\ServerRequestInterface;
 
 $loop = Factory::create();
-$video = new \React\Stream\ReadableResourceStream(fopen('bunny.mp4', 'r'), $loop);
+$video = new \React\Stream\ReadableResourceStream(fopen('media/bunny.mp4', 'r'), $loop);
 $video->on('data', function(){
     echo "Reading file\n";
 });
