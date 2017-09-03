@@ -16,7 +16,7 @@ $query = new Query('php.net', Message::TYPE_AAAA, Message::CLASS_IN, time());
 $executor->query('8.8.8.8:53', $query)
     ->then(function(Message $message){
         foreach ($message->answers as $answer) {
-            echo $answer, "\n";
+            echo $answer->data, "\n";
         }
     });
 
