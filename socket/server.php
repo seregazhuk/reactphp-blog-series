@@ -38,7 +38,7 @@ class ConnectionsPool {
                 return;
             }
 
-            $name = $connectionData['name'];
+            $name = $this->getColoredMessage("0;36", $connectionData['name']);
             $this->sendAll("$name: $data", $connection);
         });
 
@@ -48,17 +48,35 @@ class ConnectionsPool {
             $name = $data['name'] ?? '';
 
             $this->connections->offsetUnset($connection);
-            $msg = "\033[01;31mUser $name leaves the chat \033[0m\n";
-            $this->sendAll($msg, $connection);
+            $this->sendAll(
+                $this->getColoredMessage("01;31", "User $name leaves the chat") . "\n",
+                $connection
+            );
         });
     }
 
+    /**
+     * @param string $name
+     * @param ConnectionInterface $connection
+     */
     protected function sendJoinMessage($name, $connection)
     {
         $name = str_replace(["\n", "\r"], "", $name);
         $this->setConnectionData($connection, ['name' => $name]);
-        $msg = "\033[01;32mUser $name joins the chat\033[0m\n";
-        $this->sendAll($msg, $connection);
+        $this->sendAll(
+            $this->getColoredMessage("01;32", "User $name joins the chat") . "\n",
+            $connection
+        );
+    }
+
+    /**
+     * @param string $hexColor
+     * @param string $message
+     * @return string
+     */
+    private function getColoredMessage($hexColor, $message)
+    {
+        return "\033[{$hexColor}m{$message}\033[0m";
     }
 
     protected function setConnectionData(ConnectionInterface $connection, $data)
