@@ -48,7 +48,8 @@ class ConnectionsPool {
             $name = $data['name'] ?? '';
 
             $this->connections->offsetUnset($connection);
-            $this->sendAll("User $name leaves the chat\n", $connection);
+            $msg = "\033[01;31mUser $name leaves the chat \033[0m\n";
+            $this->sendAll($msg, $connection);
         });
     }
 
@@ -56,7 +57,8 @@ class ConnectionsPool {
     {
         $name = str_replace(["\n", "\r"], "", $name);
         $this->setConnectionData($connection, ['name' => $name]);
-        $this->sendAll("User $name joins the chat\n", $connection);
+        $msg = "\033[01;32mUser $name joins the chat\033[0m\n";
+        $this->sendAll($msg, $connection);
     }
 
     protected function setConnectionData(ConnectionInterface $connection, $data)

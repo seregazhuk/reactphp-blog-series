@@ -1,12 +1,11 @@
 {
     "require": {
         "react/event-loop": "^0.4",
-        "react/stream": "^0.5",
+        "react/stream": "^0.7",
         "react/promise": "^2.5",
         "react/socket": "^0.8",
         "react/datagram": "^1.1",
         "react/http-client": "^0.5",
-        "react/child-process": "^0.4",
         "react/http": "^0.7.2",
         "react/promise-timer": "^1.2",
         "react/dns": "^0.4.11"
