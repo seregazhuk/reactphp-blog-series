@@ -49,7 +49,7 @@ class ConnectionsPool {
 
             $this->connections->offsetUnset($connection);
             $this->sendAll(
-                $this->getColoredMessage("01;31", "User $name leaves the chat") . "\n",
+                $this->getColoredMessage("1;31", "User $name leaves the chat") . "\n",
                 $connection
             );
         });
@@ -64,7 +64,7 @@ class ConnectionsPool {
         $name = str_replace(["\n", "\r"], "", $name);
         $this->setConnectionData($connection, ['name' => $name]);
         $this->sendAll(
-            $this->getColoredMessage("01;32", "User $name joins the chat") . "\n",
+            $this->getColoredMessage("0;32", "User $name joins the chat") . "\n",
             $connection
         );
     }
