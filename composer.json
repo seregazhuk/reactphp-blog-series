@@ -8,6 +8,7 @@
         "react/http-client": "^0.5",
         "react/http": "^0.7.2",
         "react/promise-timer": "^1.2",
-        "react/dns": "^0.4.11"
+        "react/dns": "^0.4.11",
+        "clue/block-react": "^1.2"
     }
 }
