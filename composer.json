@@ -1,7 +1,6 @@
 {
     "require": {
         "react/event-loop": "^0.4",
-        "react/stream": "^0.7",
         "react/promise": "^2.5",
         "react/socket": "^0.8",
         "react/datagram": "^1.1",
@@ -9,6 +8,7 @@
         "react/http": "^0.7.2",
         "react/promise-timer": "^1.2",
         "react/dns": "^0.4.11",
-        "clue/block-react": "^1.2"
+        "clue/block-react": "^1.2",
+        "react/child-process": "^0.5.0"
     }
 }
