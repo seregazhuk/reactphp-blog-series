@@ -8,7 +8,7 @@ $loop = React\EventLoop\Factory::create();
 
 $resolve = function(callable $resolve, callable $reject) use ($loop) {
     $loop->addTimer(5, function() use ($resolve) {
-        return $resolve('Hello wolrd!');
+        return $resolve('Hello world!');
     });
 };
 
