@@ -34,7 +34,7 @@ class ConnectionsPool {
             // It is the first data received, so we consider it as
             // a users name.
             if(empty($connectionData)) {
-                $this->sendJoinMessage($data, $connection);
+                $this->addNewMember($data, $connection);
                 return;
             }
 
@@ -59,7 +59,7 @@ class ConnectionsPool {
      * @param string $name
      * @param ConnectionInterface $connection
      */
-    protected function sendJoinMessage($name, $connection)
+    protected function addNewMember($name, $connection)
     {
         $name = str_replace(["\n", "\r"], "", $name);
         $this->setConnectionData($connection, ['name' => $name]);
