@@ -4,6 +4,34 @@ require  '../vendor/autoload.php';
 
 use React\Socket\ConnectionInterface;
 
+class Output {
+    public static function warning($message)
+    {
+        return self::getColoredMessage("01;31", $message);
+    }
+
+    public static function info($message)
+    {
+        return self::getColoredMessage("0;32", $message);
+    }
+
+    public static function message($name, $text)
+    {
+        $name = self::getColoredMessage("0;36", $name);
+        return "$name: $text";
+    }
+
+    /**
+     * @param string $hexColor
+     * @param string $message
+     * @return string
+     */
+    private static function getColoredMessage($hexColor, $message)
+    {
+        return "\033[{$hexColor}m{$message}\033[0m";
+    }
+}
+
 class ConnectionsPool {
 
     /** @var SplObjectStorage  */
@@ -38,8 +66,8 @@ class ConnectionsPool {
                 return;
             }
 
-            $name = $this->getColoredMessage("0;36", $connectionData['name']);
-            $this->sendAll("$name: $data", $connection);
+            $name = $connectionData['name'];
+            $this->sendAll(Output::message($name, $data), $connection);
         });
 
         // When connection closes detach it from the pool
@@ -48,35 +76,33 @@ class ConnectionsPool {
             $name = $data['name'] ?? '';
 
             $this->connections->offsetUnset($connection);
-            $this->sendAll(
-                $this->getColoredMessage("1;31", "User $name leaves the chat") . "\n",
-                $connection
-            );
+            $this->sendAll(Output::warning("User $name leaves the chat") . "\n", $connection);
         });
     }
 
-    /**
-     * @param string $name
-     * @param ConnectionInterface $connection
-     */
-    protected function addNewMember($name, $connection)
+    protected function checkIsUniqueName($name)
     {
-        $name = str_replace(["\n", "\r"], "", $name);
-        $this->setConnectionData($connection, ['name' => $name]);
-        $this->sendAll(
-            $this->getColoredMessage("0;32", "User $name joins the chat") . "\n",
-            $connection
-        );
+        foreach ($this->connections as $obj) {
+            $data = $this->connections->offsetGet($obj);
+            $takenName = $data['name'] ?? '';
+            if($takenName == $name) return false;
+        }
+
+        return true;
     }
 
-    /**
-     * @param string $hexColor
-     * @param string $message
-     * @return string
-     */
-    private function getColoredMessage($hexColor, $message)
+    protected function addNewMember($name, ConnectionInterface $connection)
     {
-        return "\033[{$hexColor}m{$message}\033[0m";
+        $name = str_replace(["\n", "\r"], "", $name);
+
+        if(!$this->checkIsUniqueName($name)) {
+            $connection->write(Output::warning("Name $name is already taken!") . "\n");
+            $connection->write("Enter your name: ");
+            return;
+        }
+
+        $this->setConnectionData($connection, ['name' => $name]);
+        $this->sendAll(Output::info("User $name joins the chat") . "\n", $connection);
     }
 
     protected function setConnectionData(ConnectionInterface $connection, $data)
@@ -115,3 +141,4 @@ $socket->on('connection', function(ConnectionInterface $connection) use ($pool){
 echo "Listening on {$socket->getAddress()}\n";
 
 $loop->run();
+

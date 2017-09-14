@@ -52,7 +52,7 @@ class ConnectionsPool {
         });
     }
 
-    protected function checkUniqueName($name)
+    protected function checkIsUniqueName($name)
     {
         foreach ($this->connections as $obj) {
             $data = $this->connections->offsetGet($obj);
@@ -67,7 +67,7 @@ class ConnectionsPool {
     {
         $name = str_replace(["\n", "\r"], "", $name);
 
-        if(!$this->checkUniqueName($name)) {
+        if(!$this->checkIsUniqueName($name)) {
             $connection->write("Name $name is already taken!\n");
             $connection->write("Enter your name: ");
             return;
