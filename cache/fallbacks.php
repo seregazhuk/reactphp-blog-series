@@ -22,7 +22,5 @@ $cache->get('baz')
         $data = $value;
     });
 
-$cache->remove('s');
-
 echo $data;
 
