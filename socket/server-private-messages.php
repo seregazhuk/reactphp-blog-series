@@ -18,8 +18,6 @@ class Output {
     public static function message($text)
     {
         return self::getColoredMessage("0;36", $text);
-        //$name = self::getColoredMessage("0;36", $name);
-        //return "$name: $text";
     }
 
     /**
@@ -60,20 +58,11 @@ class ConnectionsPool {
         $connection->on('data', function ($data) use ($connection) {
             $connectionData = $this->getConnectionData($connection);
 
-            // It is the first data received, so we consider it as
-            // a users name.
-            if(empty($connectionData)) {
-                $this->addNewMember($data, $connection);
-                return;
-            }
-
-            $name = $connectionData['name'];
-            preg_match('/^@(\w+):\s+(.+)/', $data, $matches);
-            if($matches) {
-                $this->sendPrivate($matches[1], "$name: {$matches[2]}");
-                return;
-            }
-            $this->sendAll("$name: $data", $connection);
+            // If it is the first data received, we add a new member,
+	        // otherwise send a message
+            empty($connectionData) ?
+                $this->addNewMember($data, $connection) :
+	            $this->sendMessage($connection, $connectionData['name'], $data);
         });
 
         // When connection closes detach it from the pool
@@ -84,6 +73,31 @@ class ConnectionsPool {
             $this->connections->offsetUnset($connection);
             $this->sendAll(Output::warning("User $name leaves the chat") . "\n", $connection);
         });
+    }
+
+	protected function sendMessage(ConnectionInterface $connection, $name, $message)
+	{
+		// if is a private message
+		preg_match('/^@(\w+):\s(.+)/', $message, $matches);
+		if(!$matches) {
+			$this->sendAll("$name: $message", $connection);
+			return;
+		}
+
+		$sendTo = $matches[1];
+		$wasSent = $this->sendTo($sendTo, $name . ': ' . $matches[2]);
+		if(!$wasSent) {
+			$connection->write(Output::warning("User $sendTo not found!"));
+		}
+    }
+
+	protected function sendTo($name, $message)
+	{
+		$connection = $this->getConnectionByName($name);
+		if(!$connection) return false;
+
+		$connection->write(Output::message($message) . "\n");
+		return true;
     }
 
     protected function checkIsUniqueName($name)
@@ -101,7 +115,7 @@ class ConnectionsPool {
     {
         $name = str_replace(["\n", "\r"], "", $name);
 
-        if(!$this->getConnectionByName($name)) {
+        if($this->getConnectionByName($name)) {
             $connection->write(Output::warning("Name $name is already taken!") . "\n");
             $connection->write("Enter your name: ");
             return;
@@ -132,12 +146,6 @@ class ConnectionsPool {
         foreach ($this->connections as $conn) {
             if ($conn != $except) $conn->write($data);
         }
-    }
-
-    protected function sendPrivate($name, $message)
-    {
-        $connection = $this->getConnectionByName($name);
-        if($connection) $connection->write(Output::message($message) . "\n");
     }
 
     /**
