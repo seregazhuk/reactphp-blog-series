@@ -1,5 +1,7 @@
 <?php
 
+use React\EventLoop\LoopInterface;
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 class UdpChatClient
@@ -14,16 +16,21 @@ class UdpChatClient
     protected $socket;
 
     protected $name = '';
+	private   $address;
+
+	public function __construct($address, LoopInterface $loop)
+	{
+		$this->address = $address;
+		$this->loop = $loop;
+	}
 
     public function run()
     {
-        $this->loop = React\EventLoop\Factory::create();
         $factory = new React\Datagram\Factory($this->loop);
-
         $this->stdin = new React\Stream\ReadableResourceStream(STDIN, $this->loop);
         $this->stdin->on('data', [$this, 'processInput']);
 
-        $factory->createClient('localhost:1234')
+        $factory->createClient($this->address)
             ->then(
                 [$this, 'initClient'],
                 function (Exception $error) {
@@ -79,4 +86,5 @@ class UdpChatClient
     }
 }
 
-(new UdpChatClient())->run();
+$loop = React\EventLoop\Factory::create();
+(new UdpChatClient('localhost:1234', $loop))->run();
