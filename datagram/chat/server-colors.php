@@ -86,7 +86,8 @@ class UdpChatServer
                 },
                 function (Exception $error) {
                     echo "ERROR: {$error->getMessage()}\n";
-                });
+                }
+            );
 
         echo "Listening on $address\n";
         $loop->run();
