@@ -9,20 +9,24 @@ class UdpChatClient
     /** @var  React\EventLoop\LoopInterface; */
     protected $loop;
 
-    /** @var React\Stream\ReadableStreamInterface;  */
+    /** @var string */
+    private $address;
+
+    /** @var React\Stream\ReadableStreamInterface; */
     protected $stdin;
 
-    /** @var  React\Datagram\Socket  */
+    /** @var  React\Datagram\Socket */
     protected $socket;
 
+    /** @var string */
     protected $name = '';
-	private   $address;
 
-	public function __construct($address, LoopInterface $loop)
-	{
-		$this->address = $address;
-		$this->loop = $loop;
-	}
+
+    public function __construct($address, LoopInterface $loop)
+    {
+        $this->address = $address;
+        $this->loop = $loop;
+    }
 
     public function run()
     {
@@ -35,7 +39,8 @@ class UdpChatClient
                 [$this, 'initClient'],
                 function (Exception $error) {
                     echo "ERROR: {$error->getMessage()}\n";
-                });
+                }
+            );
 
         $this->loop->run();
     }
@@ -44,13 +49,17 @@ class UdpChatClient
     {
         $this->socket = $client;
 
-        $this->socket->on('message', function ($message) {
+        $this->socket->on(
+            'message', function ($message) {
             echo $message . "\n";
-        });
+        }
+        );
 
-        $this->socket->on('close', function () {
+        $this->socket->on(
+            'close', function () {
             $this->loop->stop();
-        });
+        }
+        );
 
         echo "Enter your name: ";
     }
