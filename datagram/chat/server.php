@@ -7,19 +7,19 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class UdpChatServer
 {
-	/**
-	 * @var string
-	 */
-	protected $address;
+    /**
+     * @var string
+     */
+    protected $address;
 
-	/**
-	 * @var LoopInterface
-	 */
-	protected $loop;
+    /**
+     * @var LoopInterface
+     */
+    protected $loop;
 
-	/**
-	 * @var array
-	 */
+    /**
+     * @var array
+     */
     protected $clients = [];
 
     /**
@@ -27,15 +27,15 @@ class UdpChatServer
      */
     protected $socket;
 
-	/**
-	 * @param string $address
-	 * @param LoopInterface $loop
-	 */
-	public function __construct($address, LoopInterface $loop)
-	{
-		$this->address = $address;
-		$this->loop = $loop;
-	}
+    /**
+     * @param string $address
+     * @param LoopInterface $loop
+     */
+    public function __construct($address, LoopInterface $loop)
+    {
+        $this->address = $address;
+        $this->loop = $loop;
+    }
 
     public function process($data, $address)
     {
@@ -85,7 +85,7 @@ class UdpChatServer
     {
         $name = $this->clients[$address] ?? '';
 
-	    $this->broadcast(Output::message($name, $message), $address);
+        $this->broadcast(Output::message($name, $message), $address);
     }
 
     public function run()
@@ -99,7 +99,8 @@ class UdpChatServer
                 },
                 function (Exception $error) {
                     echo "ERROR: {$error->getMessage()}\n";
-                });
+                }
+            );
 
         echo "Listening on $this->address\n";
         $this->loop->run();
