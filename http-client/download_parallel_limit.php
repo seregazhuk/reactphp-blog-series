@@ -57,6 +57,7 @@ class Downloader
     {
         $this->files = $files;
         $this->bar = new ProgressBar($this->output, count($this->files));
+        $this->bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% Time left: %estimated:-6s%');
         $this->bar->start();
 
         $max = $limit ? $limit : count($this->files);
@@ -102,11 +103,11 @@ $client = new React\HttpClient\Client($loop);
 
 $files = [
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
-    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
+    'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
 ];
 
 (new Downloader($client, $loop, new ConsoleOutput()))->download($files, 2);
