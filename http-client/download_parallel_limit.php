@@ -81,7 +81,7 @@ class Downloader
         $request->on('response', function (Response $response) use ($file, $fileName) {
             $response->pipe($file);
 
-            $response->on('end', function () {
+            $response->on('end', function () use ($fileName) {
                 $this->bar->advance();
                 if ($this->files) $this->runDownload();
             });
