@@ -10,3 +10,4 @@ Code examples for [ReactPHP blog series](http://seregazhuk.github.io/2017/06/06/
 - [Managing Child Processes](http://seregazhuk.github.io/2017/08/07/reactphp-child-process/)
 - [Resolving DNS Asynchronously](http://seregazhuk.github.io/2017/09/03/reactphp-dns/)
 - [Promise-Based Cache](http://seregazhuk.github.io/2017/09/15/reactphp-cache/)
+- [Understanding event loop ticks](http://seregazhuk.github.io/2017/09/25/reactphp-event-loop-ticks/)
