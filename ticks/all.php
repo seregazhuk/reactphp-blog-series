@@ -12,8 +12,7 @@ $eventLoop->futureTick(function(){
     echo "Future tick\n";
 });
 
-$eventLoop->nextTick(function(){
-    echo "Next tick\n";
-});
+$writable = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $eventLoop);
+$writable->write("I\O");
 
 $eventLoop->run();

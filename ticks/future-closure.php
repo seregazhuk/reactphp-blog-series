@@ -4,8 +4,9 @@ require '../vendor/autoload.php';
 
 $eventLoop = \React\EventLoop\Factory::create();
 
-$eventLoop->futureTick(function() {
-    echo "Tick\n";
+$string = "Tick!\n";
+$eventLoop->futureTick(function() use($string) {
+    echo $string;
 });
 
 echo "Loop starts\n";
