@@ -45,11 +45,12 @@ class VideoStreaming
      */
     protected function makeResponseFromFile($filePath)
     {
-        if (!file_exists($filePath)) {
+        @$file = fopen($filePath, 'r');
+        if (!$file) {
             return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
         }
 
-        $stream = new ReadableResourceStream(fopen($filePath, 'r'), $this->eventLoop);
+        $stream = new ReadableResourceStream($file, $this->eventLoop);
 
         return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
     }

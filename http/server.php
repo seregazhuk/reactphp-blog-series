@@ -19,11 +19,12 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     }
 
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
-    if (!file_exists($filePath)) {
-        return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
+    @$fileStream = fopen($filePath, 'r');
+    if (!$fileStream) {
+        return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
     }
 
-    $video = new \React\Stream\ReadableResourceStream(fopen($filePath, 'r'), $loop);
+    $video = new \React\Stream\ReadableResourceStream($fileStream, $loop);
 
     return new Response(200, ['Content-Type' => mime_content_type($filePath)], $video);
 });
