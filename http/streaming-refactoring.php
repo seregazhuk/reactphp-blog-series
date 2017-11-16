@@ -52,7 +52,7 @@ class VideoStreaming
 
         $stream = new ReadableResourceStream($file, $this->eventLoop);
 
-        return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
+        return new Response(200, ['Content-Type' => $this->getMimeTypeByExtension($filePath)], $stream);
     }
 
     /**
@@ -66,6 +66,58 @@ class VideoStreaming
         if (empty($file)) return '';
 
         return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
+    }
+
+    /**
+     * @param string $filename
+     * @return string|null
+     */
+    protected function getMimeTypeByExtension($filename) {
+        $types = [
+            '.afl' => 'video/animaflex',
+            '.asf' => 'video/x-ms-asf',
+            '.asx' => 'video/x-ms-asf',
+            '.avi' => 'video/avi',
+            '.avs' => 'video/avs-video',
+            '.dif' => 'video/x-dv',
+            '.dl' => 'video/dl',
+            '.dv' => 'video/x-dv',
+            '.fli' => 'video/fli',
+            '.fmf' => 'video/x-atomic3d-feature',
+            '.gl' => 'video/gl',
+            '.isu' => 'video/x-isvideo',
+            '.m1v' => 'video/mpeg',
+            '.m2a' => 'audio/mpeg',
+            '.m2v' => 'video/mpeg',
+            '.mjpg' => 'video/x-motion-jpeg',
+            '.moov' => 'video/quicktime',
+            '.mov' => 'video/quicktime',
+            '.movie' => 'video/x-sgi-movie',
+            '.mp2' => 'video/mpeg',
+            '.mp3' => 'video/mpeg',
+            '.mpa' => 'audio/mpeg',
+            '.mpe' => 'video/mpeg',
+            '.mpeg' => 'video/mpeg',
+            '.mpg' => 'audio/mpeg',
+            '.mv' => 'video/x-sgi-movie',
+            '.qt' => 'video/quicktime',
+            '.qtc' => 'video/x-qtc',
+            '.rv' => 'video/vnd.rn-realvideo',
+            '.scm' => 'video/x-scm',
+            '.vdo' => 'video/vdo',
+            '.viv' => 'video/vivo',
+            '.vivo' => 'video/vivo',
+            '.vos' => 'video/vosaic',
+            '.xsr' => 'video/x-amt-showrun',
+        ];
+
+        foreach ($types as $extension => $type) {
+            if(substr($filename, -strlen($extension)) === $extension) {
+                return $type;
+            }
+        }
+
+        return null;
     }
 }
 
