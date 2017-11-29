@@ -1,18 +1,16 @@
 <?php
 
-use React\EventLoop\LoopInterface;
-
 require '../vendor/autoload.php';
 
 $eventLoop = \React\EventLoop\Factory::create();
 
-$callback = function (LoopInterface $eventLoop) use (&$callback) {
+$callback = function () use ($eventLoop, &$callback) {
     echo "Hello world\n";
     $eventLoop->futureTick($callback);
 };
 
 $eventLoop->futureTick($callback);
-$eventLoop->futureTick(function(LoopInterface $eventLoop){
+$eventLoop->futureTick(function() use ($eventLoop) {
     $eventLoop->stop();
 });
 $eventLoop->run();
