@@ -10,6 +10,7 @@
         "react/dns": "^0.4.11",
         "clue/block-react": "^1.2",
         "react/child-process": "^0.5.0",
-        "symfony/console": "^3.3"
+        "symfony/console": "^3.3",
+        "react/promise-stream": "^1.1"
     }
 }
