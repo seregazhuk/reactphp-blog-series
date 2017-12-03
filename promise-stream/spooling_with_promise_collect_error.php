@@ -13,8 +13,8 @@ class Logger {
      */
     public function log(PromiseInterface $promise)
     {
-        return $promise->then(function($error) {
-            echo 'Error: ' . $error . PHP_EOL;
+        return $promise->then(function(Exception $error) {
+            echo 'Error ' . $error->getMessage() . PHP_EOL;
         });
     }
 }
@@ -32,7 +32,7 @@ class Provider {
     public function __construct($path, LoopInterface $loop)
     {
         $this->stream = new ReadableResourceStream(
-            @fopen($path, 'r'), $loop
+            fopen($path, 'r'), $loop
         );
     }
 
@@ -49,7 +49,9 @@ class Provider {
      */
     public function getFirstError()
     {
-        return \React\Promise\Stream\first($this->stream, 'error');
+        $promise = \React\Promise\Stream\first($this->stream, 'error');
+        $this->stream->emit('error', [new Exception('Something went wrong')]);
+        return $promise;
     }
 }
 

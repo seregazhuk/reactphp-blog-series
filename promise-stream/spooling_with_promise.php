@@ -41,9 +41,11 @@ $loop = \React\EventLoop\Factory::create();
 $processor = new Processor();
 $provider = new Provider();
 
-$processor->process($provider->get('file.txt', $loop))->then(function($data) {
-    echo $data . PHP_EOL;
-    echo 'Done' . PHP_EOL;
-});
+$processor
+    ->process($provider->get('file.txt', $loop))
+    ->then(function($data) {
+        echo $data . PHP_EOL;
+        echo 'Done' . PHP_EOL;
+    });
 
 $loop->run();

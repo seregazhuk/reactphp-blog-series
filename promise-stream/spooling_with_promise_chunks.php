@@ -14,6 +14,7 @@ class Processor {
     public function process(PromiseInterface $promise)
     {
         return $promise->then(function(array $chunks) {
+            echo 'Total chunks: ' . count($chunks) . PHP_EOL;
             foreach ($chunks as $index => $chunk) {
                 echo 'Chunk ' . ($index + 1) . ': ' . $chunk . PHP_EOL;
             }
