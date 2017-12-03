@@ -6,12 +6,17 @@ use React\Stream\ReadableResourceStream;
 
 require '../vendor/autoload.php';
 
-class Logger
-{
-    public function onClosed(\React\Promise\PromiseInterface $promise)
+class Processor {
+    /**
+     * @param PromiseInterface $promise
+     * @return PromiseInterface
+     */
+    public function process(PromiseInterface $promise)
     {
-        $promise->then(function($error) {
-            echo 'Connection was closed' . PHP_EOL;
+        return $promise->then(function(array $chunks) {
+            foreach ($chunks as $index => $chunk) {
+                echo 'Chunk ' . ($index + 1) . ': ' . $chunk . PHP_EOL;
+            }
         });
     }
 }
@@ -27,21 +32,18 @@ class Provider {
         $stream = new ReadableResourceStream(
             fopen($path, 'r'), $loop
         );
-        $stream->close();
-        return \React\Promise\Stream\first($stream, 'close');
+        return \React\Promise\Stream\all($stream);
     }
 }
 
 $loop = \React\EventLoop\Factory::create();
 
-$logger = new Logger();
+$processor = new Processor();
 $provider = new Provider();
 
-$logger->
-
-$processor->process($provider->get('file.txt', $loop))->then(function($data) {
-    echo $data . PHP_EOL;
-    echo 'Done' . PHP_EOL;
-});
+$processor->process($provider->get('file.txt', $loop))
+    ->then(function() {
+        echo 'Done' . PHP_EOL;
+    });
 
 $loop->run();
