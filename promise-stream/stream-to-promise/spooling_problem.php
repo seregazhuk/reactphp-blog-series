@@ -3,7 +3,7 @@
 use React\EventLoop\LoopInterface;
 use React\Stream\ReadableResourceStream;
 
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 class Processor {
     public function process($data)

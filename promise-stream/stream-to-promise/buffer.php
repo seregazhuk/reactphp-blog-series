@@ -3,7 +3,7 @@
 use React\EventLoop\LoopInterface;
 use React\Stream\ReadableResourceStream;
 
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';;
 
 function getDataFromFile($path, LoopInterface $loop) {
     $stream = new ReadableResourceStream(fopen($path, 'r'), $loop);

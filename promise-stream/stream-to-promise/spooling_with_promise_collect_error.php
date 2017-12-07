@@ -4,7 +4,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\PromiseInterface;
 use React\Stream\ReadableResourceStream;
 
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 class Logger {
     /**
