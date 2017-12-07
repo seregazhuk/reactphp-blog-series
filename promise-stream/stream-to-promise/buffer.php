@@ -10,11 +10,6 @@ function getDataFromFile($path, LoopInterface $loop) {
     return \React\Promise\Stream\buffer($stream);
 }
 
-
-function processData($data) {
-
-}
-
 $loop = \React\EventLoop\Factory::create();
 getDataFromFile('file.txt', $loop)
     ->then('trim')
