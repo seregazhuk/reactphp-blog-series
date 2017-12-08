@@ -29,9 +29,7 @@ class Provider {
      */
     public function get($path, LoopInterface $loop)
     {
-        $stream = new ReadableResourceStream(
-            fopen($path, 'r'), $loop
-        );
+        $stream = new ReadableResourceStream(fopen($path, 'r'), $loop);
         return \React\Promise\Stream\buffer($stream);
     }
 }

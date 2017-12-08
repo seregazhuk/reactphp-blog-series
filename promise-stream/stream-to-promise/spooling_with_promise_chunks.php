@@ -30,9 +30,7 @@ class Provider {
      */
     public function get($path, LoopInterface $loop)
     {
-        $stream = new ReadableResourceStream(
-            fopen($path, 'r'), $loop
-        );
+        $stream = new ReadableResourceStream(fopen($path, 'r'), $loop);
         return \React\Promise\Stream\all($stream);
     }
 }
@@ -42,7 +40,8 @@ $loop = \React\EventLoop\Factory::create();
 $processor = new Processor();
 $provider = new Provider();
 
-$processor->process($provider->get('file.txt', $loop))
+$processor
+    ->process($provider->get('file.txt', $loop))
     ->then(function() {
         echo 'Done' . PHP_EOL;
     });

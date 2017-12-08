@@ -31,9 +31,7 @@ class Provider {
      */
     public function __construct($path, LoopInterface $loop)
     {
-        $this->stream = new ReadableResourceStream(
-            fopen($path, 'r'), $loop
-        );
+        $this->stream = new ReadableResourceStream(fopen($path, 'r'), $loop);
     }
 
     /**
