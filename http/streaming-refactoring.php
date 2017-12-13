@@ -95,6 +95,7 @@ class VideoStreaming
             '.movie' => 'video/x-sgi-movie',
             '.mp2' => 'video/mpeg',
             '.mp3' => 'video/mpeg',
+            '.mp4' => 'video/mpeg',
             '.mpa' => 'audio/mpeg',
             '.mpe' => 'video/mpeg',
             '.mpeg' => 'video/mpeg',
