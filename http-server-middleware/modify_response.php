@@ -5,15 +5,14 @@ use React\Http\Server;
 use React\Http\Response;
 use React\EventLoop\Factory;
 use Psr\Http\Message\ServerRequestInterface;
-use function \React\Promise\resolve;
 
 $loop = Factory::create();
 
 $server = new Server([
     function (ServerRequestInterface $request, callable $next) {
-        return resolve($next($request))
+        return $next($request)
             ->then(function(\Psr\Http\Message\ResponseInterface $response) {
-                return resolve($response->withHeader('X-Custom', 'foo'));
+                return $response->withHeader('X-Custom', 'foo');
             });
     },
     function (ServerRequestInterface $request) {
