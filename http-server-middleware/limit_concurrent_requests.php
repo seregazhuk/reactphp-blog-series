@@ -9,10 +9,11 @@ use Psr\Http\Message\ServerRequestInterface;
 $loop = Factory::create();
 
 $server = new Server([
-    new \React\Http\Middleware\LimitConcurrentRequestsMiddleware(3),
+    new \React\Http\Middleware\LimitConcurrentRequestsMiddleware(1),
     function(ServerRequestInterface $request, callable $next) use ($loop) {
         $deferred = new \React\Promise\Deferred();
-        $loop->addTimer(5, function() use ($next, $request, $deferred) {
+        $loop->addTimer(2, function() use ($next, $request, $deferred) {
+            echo 'Resolving request' . PHP_EOL;
             $deferred->resolve($next($request));
         });
 
