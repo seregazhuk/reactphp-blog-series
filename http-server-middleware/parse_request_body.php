@@ -8,18 +8,11 @@ use Psr\Http\Message\ServerRequestInterface;
 $loop = Factory::create();
 
 $server = new \React\Http\Server([
-    function (ServerRequestInterface $request) use ($loop) {
-        /** @var \Psr\Http\Message\UploadedFileInterface[] $files */
+    function (ServerRequestInterface $request) {
         $files = $request->getUploadedFiles();
+        /** @var \Psr\Http\Message\UploadedFileInterface|null $file */
         $file = $files['file'] ?? null;
-
-        if($file) {
-            echo $file->getClientFilename() . PHP_EOL;
-            $dest = new \React\Stream\WritableResourceStream(fopen('dest.txt', 'w'), $loop);
-            $dest->write($file->getStream());
-        }
-
-        return new Response(200, ['Content-Type' => 'text/plain']);
+        return new Response(200, ['Content-Type' => 'text/plain'],  $file ? $file->getClientFilename() : '');
     }
 ]);
 
