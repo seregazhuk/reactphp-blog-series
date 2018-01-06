@@ -10,10 +10,8 @@ $loop = Factory::create();
 
 $server = new Server([
     function (ServerRequestInterface $request, callable $next) {
-        return $next($request)
-            ->then(function(\Psr\Http\Message\ResponseInterface $response) {
-                return $response->withHeader('X-Custom', 'foo');
-            });
+        $response = $next($request);
+        return $response->withHeader('X-Custom', 'foo');
     },
     function (ServerRequestInterface $request) {
         return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
