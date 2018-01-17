@@ -13,3 +13,4 @@ Code examples for [ReactPHP blog series](http://sergeyzhuk.me/2017/06/06/phpreac
 - [Understanding event loop ticks](http://sergeyzhuk.me/2017/09/25/reactphp-event-loop-ticks/)
 - [PromiseStream: from promise to stream and vice versa](http://sergeyzhuk.me/2017/12/07/reactphp-promise-stream/)
 - [HTTP Server Middleware](http://sergeyzhuk.me/2017/12/20/reactphp-http-middleware/)
+- [Managing ReactPHP Promises](http://sergeyzhuk.me/2018/01/16/reactphp-managing-promises/)
