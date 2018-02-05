@@ -10,9 +10,10 @@ $pending = [
     $secondResolver->promise()
 ];
 
-$promise = \React\Promise\all($pending)->then(function($resolved){
-    print_r($resolved);
-});
+$promise = \React\Promise\all($pending)
+    ->then(function($resolved){
+        print_r($resolved);
+    });
 
 $firstResolver->resolve(10);
 $secondResolver->resolve(20);

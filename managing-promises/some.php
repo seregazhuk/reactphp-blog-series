@@ -14,11 +14,11 @@ $pending = [
 
 $promise = \React\Promise\some($pending, 2)
     ->then(function($resolved){
-        echo 'Resolved' . PHP_EOL;
-        print_r($resolved);
-    }, function($errors){
-        echo 'Failed' . PHP_EOL;
-        print_r($errors);
+            echo 'Resolved' . PHP_EOL;
+            print_r($resolved);
+        }, function($errors){
+            echo 'Failed' . PHP_EOL;
+            print_r($errors);
     });
 
 $loop = \React\EventLoop\Factory::create();

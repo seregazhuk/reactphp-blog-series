@@ -10,11 +10,14 @@ $pending = [
     $secondResolver->promise()
 ];
 
-$promise = \React\Promise\race($pending)->then(function($resolved){
-    echo 'resolved with' . $resolved . PHP_EOL;
-}, function($failed){
-    echo 'failed with' . $failed;
-});
+$promise = \React\Promise\race($pending)
+    ->then(
+        function($resolved){
+            echo 'resolved with' . $resolved . PHP_EOL;
+        },
+        function($failed){
+            echo 'failed with' . $failed;
+    });
 
 
 $loop = \React\EventLoop\Factory::create();

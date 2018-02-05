@@ -10,9 +10,10 @@ $pending = [
     $secondResolver->promise()
 ];
 
-$promise = \React\Promise\any($pending)->then(function($resolved){
-    echo $resolved . PHP_EOL;
-});
+$promise = \React\Promise\any($pending)
+    ->then(function($resolved){
+        echo $resolved . PHP_EOL;
+    });
 
 $loop = \React\EventLoop\Factory::create();
 $loop->addTimer(2, function() use ($firstResolver){
