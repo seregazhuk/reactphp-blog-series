@@ -4,7 +4,7 @@ require '../vendor/autoload.php';
 
 use Clue\React\Buzz\Browser;
 use Psr\Http\Message\ResponseInterface;
-use React\EventLoop\LoopInterface;
+use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -12,20 +12,28 @@ $loop = React\EventLoop\Factory::create();
 
 class Parser {
     const BASE_URL = 'http://www.imdb.com';
+    const TIMEOUT = 5;
+
+    private $parsed = [];
 
     /**
      * @var PromiseInterface[]
      */
-    private $requests;
+    private $requests = [];
 
     /**
      * @var Browser
      */
     private $browser;
+    /**
+     * @var \React\EventLoop\LoopInterface
+     */
+    private $loop;
 
-    public function __construct(Browser $browser)
+    public function __construct(Browser $browser, \React\EventLoop\LoopInterface $loop)
     {
         $this->browser = $browser->withBase(self::BASE_URL);
+        $this->loop = $loop;
     }
 
     public function parse($url)
@@ -56,6 +64,7 @@ class Parser {
         $this->makeRequest($moviePageUrl, function(ResponseInterface $response) {
             $crawler = new Crawler((string)$response->getBody());
             $title = trim($crawler->filter('h1')->text());
+
             $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
             $description = trim($crawler->filter('[itemprop="description"]')->text());
 
@@ -66,7 +75,8 @@ class Parser {
             });
             $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
 
-            return [
+            echo $title . PHP_EOL;
+            $this->parsed[] = [
                 'title' => $title,
                 'genres' => $genres,
                 'description' => $description,
@@ -78,19 +88,43 @@ class Parser {
     /**
      * @param string $url
      * @param callable $callback
-     * @return PromiseInterface
      */
     private function makeRequest($url, callable $callback)
     {
-        return $this->requests[] = $this->browser->get($url)
-            ->then($callback, function(Exception $exception){
-                echo $exception->getMessage();
+        /** @var Promise $promise */
+        $promise = $this->browser->get($url)
+            ->then(function(ResponseInterface $response) use ($callback, $url){
+                $callback($response);
+                //$this->clearRequest($url);
+            }, function(Exception $exception) use ($url) {
+                echo $exception->getMessage() . PHP_EOL;
+                //$this->clearRequest($url);
+            })->always(function() use ($url){
+                $this->clearRequest($url);
             });
+
+        $this->requests[$url] = $promise;
+        $this->loop->addTimer(self::TIMEOUT, function () use($promise) {
+            $promise->cancel();
+        });
+    }
+
+    private function clearRequest($url)
+    {
+        unset($this->requests[$url]);
+        echo count($this->requests) . PHP_EOL;
+    }
+
+    public function getMovies()
+    {
+        return $this->parsed;
     }
 }
 
-
-$parser = new Parser(new Browser($loop));
+$parser = new Parser(new Browser($loop), $loop);
 $parser->parse('movies-coming-soon');
 
 $loop->run();
+
+echo 'After the loop' . PHP_EOL;
+print_r($parser->getMovies());
