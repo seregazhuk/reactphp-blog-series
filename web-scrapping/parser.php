@@ -5,6 +5,7 @@ require '../vendor/autoload.php';
 use Clue\React\Buzz\Browser;
 use Psr\Http\Message\ResponseInterface;
 use React\EventLoop\LoopInterface;
+use React\Promise\PromiseInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 $loop = React\EventLoop\Factory::create();
@@ -13,38 +14,35 @@ class Parser {
     const BASE_URL = 'http://www.imdb.com';
 
     /**
+     * @var PromiseInterface[]
+     */
+    private $requests;
+
+    /**
      * @var Browser
      */
     private $browser;
 
-    /**
-     * @var LoopInterface
-     */
-    private $loop;
-
-    public function __construct(Browser $browser, LoopInterface $loop)
+    public function __construct(Browser $browser)
     {
         $this->browser = $browser->withBase(self::BASE_URL);
-        $this->loop = $loop;
     }
 
     public function parse($url)
     {
-        $this->browser->get($url)
+        $this->makeRequest($url)
             ->then(function(ResponseInterface $response) {
                 $crawler = new Crawler((string)$response->getBody());
                 $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
                 foreach ($monthLinks as $monthLink) {
                     $this->parseMonthPage($monthLink);
                 }
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
+            }, [$this, 'handleError']);
     }
 
     private function parseMonthPage($monthPageUrl)
     {
-        $this->browser->get($monthPageUrl)
+        $this->makeRequest($monthPageUrl)
             ->then(function(ResponseInterface $response) {
                 $crawler = new Crawler((string)$response->getBody());
                 $movieLinks = $crawler->filter('.overview-top h4 a')->extract(['href']);
@@ -52,14 +50,12 @@ class Parser {
                 foreach ($movieLinks as $movieLink) {
                     $this->parseMovieData($movieLink);
                 }
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
+            }, [$this, 'handleError']);
     }
 
     private function parseMovieData($moviePageUrl)
     {
-        $this->browser->get($moviePageUrl)
+        $this->makeRequest($moviePageUrl)
             ->then(function(ResponseInterface $response){
                 $crawler = new Crawler((string)$response->getBody());
                 $title = trim($crawler->filter('h1')->text());
@@ -73,26 +69,32 @@ class Parser {
                 });
                 $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
 
-
-                $fileName = __DIR__ . '/parsed/' . $title . '.json';
-                $stream = new \React\Stream\WritableResourceStream(fopen($fileName, 'w'), $this->loop);
-
-                $stream->write(json_encode([
+                return [
                     'title' => $title,
                     'genres' => $genres,
                     'description' => $description,
                     'release_date' => $releaseDate,
-                ]));
-                $stream->end();
+                ];
+            }, [$this, 'handleError']);
+    }
 
-        }, function(Exception $e){
-            echo $e->getMessage();
-        });
+    /**
+     * @param string $url
+     * @return PromiseInterface
+     */
+    private function makeRequest($url)
+    {
+        return $this->requests[] = $this->browser->get($url);
+    }
+
+    private function handleError(Exception $exception)
+    {
+        echo $exception->getMessage();
     }
 }
 
 
-$parser = new Parser(new Browser($loop), $loop);
+$parser = new Parser(new Browser($loop));
 $parser->parse('movies-coming-soon');
 
 $loop->run();
