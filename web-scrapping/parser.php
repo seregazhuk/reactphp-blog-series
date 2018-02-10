@@ -31,48 +31,48 @@ class Parser {
     public function parse($url)
     {
         $this->makeRequest($url, function(ResponseInterface $response) {
-                $crawler = new Crawler((string)$response->getBody());
-                $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
-                foreach ($monthLinks as $monthLink) {
-                    $this->parseMonthPage($monthLink);
-                }
-            });
+            $crawler = new Crawler((string)$response->getBody());
+            $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
+            foreach ($monthLinks as $monthLink) {
+                $this->parseMonthPage($monthLink);
+            }
+        });
     }
 
     private function parseMonthPage($monthPageUrl)
     {
         $this->makeRequest($monthPageUrl, function(ResponseInterface $response) {
-                $crawler = new Crawler((string)$response->getBody());
-                $movieLinks = $crawler->filter('.overview-top h4 a')->extract(['href']);
+            $crawler = new Crawler((string)$response->getBody());
+            $movieLinks = $crawler->filter('.overview-top h4 a')->extract(['href']);
 
-                foreach ($movieLinks as $movieLink) {
-                    $this->parseMovieData($movieLink);
-                }
-            });
+            foreach ($movieLinks as $movieLink) {
+                $this->parseMovieData($movieLink);
+            }
+        });
     }
 
     private function parseMovieData($moviePageUrl)
     {
         $this->makeRequest($moviePageUrl, function(ResponseInterface $response) {
-                $crawler = new Crawler((string)$response->getBody());
-                $title = trim($crawler->filter('h1')->text());
-                $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
-                $description = trim($crawler->filter('[itemprop="description"]')->text());
+            $crawler = new Crawler((string)$response->getBody());
+            $title = trim($crawler->filter('h1')->text());
+            $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
+            $description = trim($crawler->filter('[itemprop="description"]')->text());
 
-                $crawler->filter('#titleDetails .txt-block')->each(function (Crawler $crawler) {
-                    foreach ($crawler->children() as $node) {
-                        $node->parentNode->removeChild($node);
-                    }
-                });
-                $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
-
-                return [
-                    'title' => $title,
-                    'genres' => $genres,
-                    'description' => $description,
-                    'release_date' => $releaseDate,
-                ];
+            $crawler->filter('#titleDetails .txt-block')->each(function (Crawler $crawler) {
+                foreach ($crawler->children() as $node) {
+                    $node->parentNode->removeChild($node);
+                }
             });
+            $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+
+            return [
+                'title' => $title,
+                'genres' => $genres,
+                'description' => $description,
+                'release_date' => $releaseDate,
+            ];
+        });
     }
 
     /**
