@@ -30,33 +30,30 @@ class Parser {
 
     public function parse($url)
     {
-        $this->makeRequest($url)
-            ->then(function(ResponseInterface $response) {
+        $this->makeRequest($url, function(ResponseInterface $response) {
                 $crawler = new Crawler((string)$response->getBody());
                 $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
                 foreach ($monthLinks as $monthLink) {
                     $this->parseMonthPage($monthLink);
                 }
-            }, [$this, 'handleError']);
+            });
     }
 
     private function parseMonthPage($monthPageUrl)
     {
-        $this->makeRequest($monthPageUrl)
-            ->then(function(ResponseInterface $response) {
+        $this->makeRequest($monthPageUrl, function(ResponseInterface $response) {
                 $crawler = new Crawler((string)$response->getBody());
                 $movieLinks = $crawler->filter('.overview-top h4 a')->extract(['href']);
 
                 foreach ($movieLinks as $movieLink) {
                     $this->parseMovieData($movieLink);
                 }
-            }, [$this, 'handleError']);
+            });
     }
 
     private function parseMovieData($moviePageUrl)
     {
-        $this->makeRequest($moviePageUrl)
-            ->then(function(ResponseInterface $response){
+        $this->makeRequest($moviePageUrl, function(ResponseInterface $response) {
                 $crawler = new Crawler((string)$response->getBody());
                 $title = trim($crawler->filter('h1')->text());
                 $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
@@ -75,21 +72,20 @@ class Parser {
                     'description' => $description,
                     'release_date' => $releaseDate,
                 ];
-            }, [$this, 'handleError']);
+            });
     }
 
     /**
      * @param string $url
+     * @param callable $callback
      * @return PromiseInterface
      */
-    private function makeRequest($url)
+    private function makeRequest($url, callable $callback)
     {
-        return $this->requests[] = $this->browser->get($url);
-    }
-
-    private function handleError(Exception $exception)
-    {
-        echo $exception->getMessage();
+        return $this->requests[] = $this->browser->get($url)
+            ->then($callback, function(Exception $exception){
+                echo $exception->getMessage();
+            });
     }
 }
 
