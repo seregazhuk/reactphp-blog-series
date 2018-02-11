@@ -3,128 +3,76 @@
 require '../vendor/autoload.php';
 
 use Clue\React\Buzz\Browser;
-use Psr\Http\Message\ResponseInterface;
-use React\Promise\Promise;
-use React\Promise\PromiseInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 $loop = React\EventLoop\Factory::create();
+$client = new Browser($loop);
 
-class Parser {
-    const BASE_URL = 'http://www.imdb.com';
-    const TIMEOUT = 5;
-
-    private $parsed = [];
-
-    /**
-     * @var PromiseInterface[]
-     */
-    private $requests = [];
-
+class Parser
+{
     /**
      * @var Browser
      */
-    private $browser;
+    private $client;
+
     /**
-     * @var \React\EventLoop\LoopInterface
+     * @var array
      */
-    private $loop;
+    private $parsed = [];
 
-    public function __construct(Browser $browser, \React\EventLoop\LoopInterface $loop)
+    public function __construct(Browser $client)
     {
-        $this->browser = $browser->withBase(self::BASE_URL);
-        $this->loop = $loop;
+        $this->client = $client;
     }
 
-    public function parse($url)
+    public function parse(array $urls = [])
     {
-        $this->makeRequest($url, function(ResponseInterface $response) {
-            $crawler = new Crawler((string)$response->getBody());
-            $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
-            foreach ($monthLinks as $monthLink) {
-                $this->parseMonthPage($monthLink);
-            }
-        });
+        foreach ($urls as $url) {
+             $this->client->get($url)->then(
+                function (\Psr\Http\Message\ResponseInterface $response) {
+                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
+                });
+        }
     }
 
-    private function parseMonthPage($monthPageUrl)
+    public function extractFromHtml($html)
     {
-        $this->makeRequest($monthPageUrl, function(ResponseInterface $response) {
-            $crawler = new Crawler((string)$response->getBody());
-            $movieLinks = $crawler->filter('.overview-top h4 a')->extract(['href']);
+        $crawler = new Crawler($html);
 
-            foreach ($movieLinks as $movieLink) {
-                $this->parseMovieData($movieLink);
-            }
-        });
-    }
+        $title = trim($crawler->filter('h1')->text());
+        $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
+        $description = trim($crawler->filter('[itemprop="description"]')->text());
 
-    private function parseMovieData($moviePageUrl)
-    {
-        $this->makeRequest($moviePageUrl, function(ResponseInterface $response) {
-            $crawler = new Crawler((string)$response->getBody());
-            $title = trim($crawler->filter('h1')->text());
-
-            $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
-            $description = trim($crawler->filter('[itemprop="description"]')->text());
-
-            $crawler->filter('#titleDetails .txt-block')->each(function (Crawler $crawler) {
+        $crawler->filter('#titleDetails .txt-block')->each(
+            function (Crawler $crawler) {
                 foreach ($crawler->children() as $node) {
                     $node->parentNode->removeChild($node);
                 }
-            });
-            $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+            }
+        );
 
-            echo $title . PHP_EOL;
-            $this->parsed[] = [
-                'title' => $title,
-                'genres' => $genres,
-                'description' => $description,
-                'release_date' => $releaseDate,
-            ];
-        });
+        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(3)->text());
+
+        return [
+            'title'        => $title,
+            'genres'       => $genres,
+            'description'  => $description,
+            'release_date' => $releaseDate,
+        ];
     }
 
-    /**
-     * @param string $url
-     * @param callable $callback
-     */
-    private function makeRequest($url, callable $callback)
-    {
-        /** @var Promise $promise */
-        $promise = $this->browser->get($url)
-            ->then(function(ResponseInterface $response) use ($callback, $url){
-                $callback($response);
-                //$this->clearRequest($url);
-            }, function(Exception $exception) use ($url) {
-                echo $exception->getMessage() . PHP_EOL;
-                //$this->clearRequest($url);
-            })->always(function() use ($url){
-                $this->clearRequest($url);
-            });
-
-        $this->requests[$url] = $promise;
-        $this->loop->addTimer(self::TIMEOUT, function () use($promise) {
-            $promise->cancel();
-        });
-    }
-
-    private function clearRequest($url)
-    {
-        unset($this->requests[$url]);
-        echo count($this->requests) . PHP_EOL;
-    }
-
-    public function getMovies()
+    public function getParsed()
     {
         return $this->parsed;
     }
 }
 
-$parser = new Parser(new Browser($loop), $loop);
-$parser->parse('movies-coming-soon');
+
+$parser = new Parser($client);
+$parser->parse([
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/'
+]);
 
 $loop->run();
-
-echo 'After the loop' . PHP_EOL;
-print_r($parser->getMovies());
+print_r($parser->getParsed());
