@@ -3,10 +3,8 @@
 require '../vendor/autoload.php';
 
 use Clue\React\Buzz\Browser;
+use React\EventLoop\LoopInterface;
 use Symfony\Component\DomCrawler\Crawler;
-
-$loop = React\EventLoop\Factory::create();
-$client = new Browser($loop);
 
 class Parser
 {
@@ -20,18 +18,28 @@ class Parser
      */
     private $parsed = [];
 
-    public function __construct(Browser $client)
+    /**
+     * @var LoopInterface
+     */
+    private $loop;
+
+    public function __construct(Browser $client, LoopInterface $loop)
     {
         $this->client = $client;
+        $this->loop = $loop;
     }
 
-    public function parse(array $urls = [])
+    public function parse(array $urls = [], $timeout = 5)
     {
         foreach ($urls as $url) {
-             $this->client->get($url)->then(
+             $promise = $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
                    $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
                 });
+
+             $this->loop->addTimer($timeout, function() use ($promise) {
+                 $promise->cancel();
+             });
         }
     }
 
@@ -61,18 +69,21 @@ class Parser
         ];
     }
 
-    public function getParsed()
+    public function getMovieData()
     {
         return $this->parsed;
     }
 }
 
 
-$parser = new Parser($client);
+$loop = React\EventLoop\Factory::create();
+$client = new Browser($loop);
+
+$parser = new Parser($client, $loop);
 $parser->parse([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/'
-]);
+], 2);
 
 $loop->run();
-print_r($parser->getParsed());
+print_r($parser->getMovieData());
