@@ -1,0 +1,6 @@
+{
+    "require": {
+        "react/filesystem": "^0.1.0",
+        "react/stream": "^0.4.3"
+    }
+}
