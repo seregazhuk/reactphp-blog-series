@@ -9,12 +9,8 @@ $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
 $file = $filesystem->file('test.txt');
-$file->getContents()->then(function($contents) {
-    echo $contents . PHP_EOL;
-});
-
-$loop->addPeriodicTimer(1, function(){
-    echo 'Timer' . PHP_EOL;
+$file->putContents("Hello world\n")->then(function() {
+    echo "Data was written" . PHP_EOL;
 });
 
 $loop->run();

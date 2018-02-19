@@ -9,12 +9,10 @@ $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
 $file = $filesystem->file('test.txt');
-$file->getContents()->then(function($contents) {
-    echo $contents . PHP_EOL;
-});
-
-$loop->addPeriodicTimer(1, function(){
-    echo 'Timer' . PHP_EOL;
+$file->open('cw')->then(function($stream) {
+    $stream->write("Hello world\n");
+    $stream->end();
+    echo "Data was written\n";
 });
 
 $loop->run();
