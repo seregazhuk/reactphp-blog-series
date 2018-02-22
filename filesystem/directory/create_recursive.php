@@ -7,9 +7,9 @@ require '../vendor/autoload.php';
 
 $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
-$dir = $filesystem->dir('new');
+$dir = $filesystem->dir('new/test/test');
 
-$dir->create()->then(function(){
+$dir->createRecursive()->then(function(){
     echo 'Created' . PHP_EOL;
 }, function(Exception $e) {
     echo 'Error: ' . $e->getMessage() . PHP_EOL;

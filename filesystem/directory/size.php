@@ -7,12 +7,10 @@ require '../vendor/autoload.php';
 
 $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
-$dir = $filesystem->dir('new');
+$dir = $filesystem->dir(__DIR__);
 
-$dir->create()->then(function(){
-    echo 'Created' . PHP_EOL;
-}, function(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+$dir->sizeRecursive()->then(function($size){
+    print_r($size);
 });
 
 $loop->run();
