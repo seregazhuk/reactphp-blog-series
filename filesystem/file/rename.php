@@ -9,8 +9,8 @@ require '../vendor/autoload.php';
 $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
-$file = $filesystem->file('test.txt')->rename('new.txt')->then(function(){
-    echo 'File was renamed' . PHP_EOL;
+$file = $filesystem->file('test.txt')->rename('new.txt')->then(function(FileInterface $file){
+    echo 'File was renamed to: ' . $file->getPath() . PHP_EOL;
 });
 
 $loop->run();
