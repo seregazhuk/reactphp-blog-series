@@ -10,7 +10,9 @@ $filesystem = Filesystem::create($loop);
 $dir = $filesystem->dir(__DIR__);
 
 $dir->sizeRecursive()->then(function($size){
-    print_r($size);
+    echo 'Directories: ' . $size['directories'] . PHP_EOL;
+    echo 'Files: ' . $size['files'] . PHP_EOL;
+    echo 'Bytes: ' . $size['size'] . PHP_EOL;
 });
 
 $loop->run();
