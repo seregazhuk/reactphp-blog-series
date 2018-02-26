@@ -9,7 +9,7 @@ $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
 $file = $filesystem->file('test.txt');
-$file->open('cw')->then(function($stream) {
+$file->open('cw')->then(function(React\Stream\WritableStreamInterface $stream) {
     $stream->write("Hello world\n");
     $stream->end();
     echo "Data was written\n";
