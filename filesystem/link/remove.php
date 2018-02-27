@@ -9,9 +9,12 @@ $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
 $filesystem->getAdapter()
-    ->unlink('test_link.txt')
-    ->then(function($path){
-        echo $path . PHP_EOL;
+    ->unlink('dir')
+    ->then(function() {
+        echo 'Link removed' . PHP_EOL;
+    }, function(Exception $e){
+        echo $e->getMessage() . PHP_EOL;
     });
+
 
 $loop->run();
