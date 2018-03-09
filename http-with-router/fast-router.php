@@ -8,7 +8,7 @@ use React\EventLoop\Factory;
 use Psr\Http\Message\ServerRequestInterface;
 
 $tasks = [];
-$listTasks = function () use (&$tasks) {
+$listTasks = function () use ($tasks) {
     return new Response(200, ['Content-Type' => 'text/plain'],  implode(PHP_EOL, $tasks));
 };
 
@@ -21,6 +21,8 @@ $addTask = function (ServerRequestInterface $request) use (&$tasks) {
 
     return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
 };
+
+$viewTask = function(ServerRequestInterface $request) use ($tasks) {};
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($listTasks, $addTask) {
     $r->addRoute('GET', '/tasks', $listTasks);
