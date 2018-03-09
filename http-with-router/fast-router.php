@@ -1,0 +1,53 @@
+<?php
+
+require '../vendor/autoload.php';
+
+use React\Http\Server;
+use React\Http\Response;
+use React\EventLoop\Factory;
+use Psr\Http\Message\ServerRequestInterface;
+
+$tasks = [];
+$listTasks = function () use (&$tasks) {
+    return new Response(200, ['Content-Type' => 'text/plain'],  implode(PHP_EOL, $tasks));
+};
+
+$addTask = function (ServerRequestInterface $request) use (&$tasks) {
+    $task = $request->getParsedBody()['task'] ?? null;
+    if($task) {
+        $tasks[] = $task;
+        return new Response(201);
+    }
+
+    return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
+};
+
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($listTasks, $addTask) {
+    $r->addRoute('GET', '/tasks', $listTasks);
+    $r->addRoute('POST', '/tasks', $addTask);
+});
+
+$loop = Factory::create();
+
+$server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
+    list($result, $handler) = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+
+    switch ($result) {
+        case FastRoute\Dispatcher::NOT_FOUND:
+            return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
+        case FastRoute\Dispatcher::FOUND:
+            return $handler($request);
+    }
+
+    return new Response(200, ['Content-Type' => 'text/plain'], 'Hello world');
+});
+
+$socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
+$server->listen($socket);
+$server->on('error', function(Exception $e){
+    echo $e->getMessage() . PHP_EOL;
+});
+
+echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n";
+
+$loop->run();
