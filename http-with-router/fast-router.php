@@ -36,13 +36,13 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 $loop = Factory::create();
 
 $server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
-    list($result, $handler, $params) = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+    $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
-    switch ($result) {
+    switch ($routeInfo[0]) {
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
         case FastRoute\Dispatcher::FOUND:
-            return $handler($request, ...$params);
+            return $routeInfo[1]($request);
     }
 
     return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
