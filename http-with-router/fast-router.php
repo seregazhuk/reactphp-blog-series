@@ -22,26 +22,30 @@ $addTask = function (ServerRequestInterface $request) use (&$tasks) {
     return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
 };
 
-$viewTask = function(ServerRequestInterface $request) use ($tasks) {};
+$viewTask = function(ServerRequestInterface $request) use ($tasks) {
+    $path = $request->getUri()->getPath();
+    die();
+};
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($listTasks, $addTask) {
-    $r->addRoute('GET', '/tasks', $listTasks);
-    $r->addRoute('POST', '/tasks', $addTask);
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($listTasks, $addTask, $viewTask) {
+    $routes->addRoute('GET', '/tasks', $listTasks);
+    $routes->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
+    $routes->addRoute('POST', '/tasks', $addTask);
 });
 
 $loop = Factory::create();
 
 $server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
-    list($result, $handler) = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+    list($result, $handler, $params) = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
     switch ($result) {
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
         case FastRoute\Dispatcher::FOUND:
-            return $handler($request);
+            return $handler($request, ...$params);
     }
 
-    return new Response(200, ['Content-Type' => 'text/plain'], 'Hello world');
+    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
 });
 
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
