@@ -22,17 +22,17 @@ $addTask = function (ServerRequestInterface $request) use (&$tasks) {
     return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
 };
 
-$viewTask = function(ServerRequestInterface $request, $params) use (&$tasks) {
-    if (isset($tasks[$id])) {
-        return new Response(200, ['Content-Type' => 'text/plain'], $tasks[$id]);
+$viewTask = function(ServerRequestInterface $request, $taskId) use (&$tasks) {
+    if (isset($tasks[$taskId])) {
+        return new Response(200, ['Content-Type' => 'text/plain'], $tasks[$taskId]);
     }
 
     return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
 };
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($listTasks, $addTask, $viewTask) {
-    $routes->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
     $routes->addRoute('GET', '/tasks', $listTasks);
+    $routes->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
     $routes->addRoute('POST', '/tasks', $addTask);
 });
 
@@ -46,7 +46,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
         case FastRoute\Dispatcher::FOUND:
             $params = $routeInfo[2] ?? [];
-            return $routeInfo[1]($request, $params);
+            return $routeInfo[1]($request, ... array_values($params));
     }
 
     return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
