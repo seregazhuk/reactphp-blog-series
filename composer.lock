@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "354e5e7335beaeee905e2492176aa797",
+    "hash": "f5a807babb10038590c610861543dba0",
+    "content-hash": "694a6f3b64f35b1ede832c194ebcebdc",
     "packages": [
         {
             "name": "clue/block-react",
@@ -55,7 +56,7 @@
                 "reactphp",
                 "synchronous"
             ],
-            "time": "2017-08-03T13:14:15+00:00"
+            "time": "2017-08-03 13:14:15"
         },
         {
             "name": "clue/buzz-react",
@@ -113,7 +114,64 @@
                 "psr-7",
                 "reactphp"
             ],
-            "time": "2018-02-09T14:08:41+00:00"
+            "time": "2018-02-09 14:08:41"
+        },
+        {
+            "name": "clue/mq-react",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/clue/php-mq-react.git",
+                "reference": "80226a0d9bf32155fc5a48091c5dd75e9842044d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/clue/php-mq-react/zipball/80226a0d9bf32155fc5a48091c5dd75e9842044d",
+                "reference": "80226a0d9bf32155fc5a48091c5dd75e9842044d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3",
+                "react/promise": "^2.2.1 || ^1.2.1"
+            },
+            "require-dev": {
+                "clue/block-react": "^1.0",
+                "clue/buzz-react": "^2.0",
+                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35",
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Clue\\React\\Mq\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Lück",
+                    "email": "christian@lueck.tv"
+                }
+            ],
+            "description": "Mini Queue, the lightweight in-memory message queue to concurrently do many (but not too many) things at once, built on top of ReactPHP",
+            "homepage": "https://github.com/clue/php-mq-react",
+            "keywords": [
+                "Mini Queue",
+                "async",
+                "concurrency",
+                "job",
+                "message",
+                "message queue",
+                "queue",
+                "rate limit",
+                "reactphp",
+                "throttle",
+                "worker"
+            ],
+            "time": "2018-02-26 10:29:23"
         },
         {
             "name": "evenement/evenement",
@@ -156,7 +214,7 @@
                 "event-dispatcher",
                 "event-emitter"
             ],
-            "time": "2017-07-23T21:35:13+00:00"
+            "time": "2017-07-23 21:35:13"
         },
         {
             "name": "nikic/fast-route",
@@ -202,7 +260,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2018-02-13T20:26:39+00:00"
+            "time": "2018-02-13 20:26:39"
         },
         {
             "name": "psr/http-message",
@@ -252,7 +310,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2016-08-06 14:39:51"
         },
         {
             "name": "psr/log",
@@ -299,7 +357,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10T12:19:37+00:00"
+            "time": "2016-10-10 12:19:37"
         },
         {
             "name": "react/cache",
@@ -339,7 +397,7 @@
                 "promise",
                 "reactphp"
             ],
-            "time": "2017-12-20T16:47:13+00:00"
+            "time": "2017-12-20 16:47:13"
         },
         {
             "name": "react/child-process",
@@ -381,7 +439,7 @@
                 "process",
                 "reactphp"
             ],
-            "time": "2018-01-18T14:53:06+00:00"
+            "time": "2018-01-18 14:53:06"
         },
         {
             "name": "react/datagram",
@@ -436,7 +494,7 @@
                 "server",
                 "udp"
             ],
-            "time": "2018-02-28T09:34:17+00:00"
+            "time": "2018-02-28 09:34:17"
         },
         {
             "name": "react/dns",
@@ -481,7 +539,7 @@
                 "dns-resolver",
                 "reactphp"
             ],
-            "time": "2018-02-27T12:51:22+00:00"
+            "time": "2018-02-27 12:51:22"
         },
         {
             "name": "react/event-loop",
@@ -523,7 +581,7 @@
                 "asynchronous",
                 "event-loop"
             ],
-            "time": "2017-04-27T10:56:23+00:00"
+            "time": "2017-04-27 10:56:23"
         },
         {
             "name": "react/http",
@@ -571,7 +629,7 @@
                 "server",
                 "streaming"
             ],
-            "time": "2018-01-05T15:30:50+00:00"
+            "time": "2018-01-05 15:30:50"
         },
         {
             "name": "react/http-client",
@@ -613,7 +671,7 @@
             "keywords": [
                 "http"
             ],
-            "time": "2018-02-09T08:42:44+00:00"
+            "time": "2018-02-09 08:42:44"
         },
         {
             "name": "react/promise",
@@ -659,7 +717,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2017-03-25T12:08:31+00:00"
+            "time": "2017-03-25 12:08:31"
         },
         {
             "name": "react/promise-stream",
@@ -715,7 +773,7 @@
                 "stream",
                 "unwrap"
             ],
-            "time": "2017-12-22T12:02:05+00:00"
+            "time": "2017-12-22 12:02:05"
         },
         {
             "name": "react/promise-timer",
@@ -768,7 +826,7 @@
                 "timeout",
                 "timer"
             ],
-            "time": "2017-12-22T15:41:41+00:00"
+            "time": "2017-12-22 15:41:41"
         },
         {
             "name": "react/socket",
@@ -815,7 +873,7 @@
                 "reactphp",
                 "stream"
             ],
-            "time": "2018-02-28T09:32:38+00:00"
+            "time": "2018-02-28 09:32:38"
         },
         {
             "name": "react/stream",
@@ -861,7 +919,7 @@
                 "stream",
                 "writable"
             ],
-            "time": "2018-01-19T15:04:38+00:00"
+            "time": "2018-01-19 15:04:38"
         },
         {
             "name": "ringcentral/psr7",
@@ -919,7 +977,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2018-01-15T21:00:49+00:00"
+            "time": "2018-01-15 21:00:49"
         },
         {
             "name": "symfony/console",
@@ -988,7 +1046,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-26T15:46:28+00:00"
+            "time": "2018-02-26 15:46:28"
         },
         {
             "name": "symfony/css-selector",
@@ -1041,7 +1099,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-03T14:55:07+00:00"
+            "time": "2018-02-03 14:55:07"
         },
         {
             "name": "symfony/debug",
@@ -1097,7 +1155,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-28T21:49:22+00:00"
+            "time": "2018-02-28 21:49:22"
         },
         {
             "name": "symfony/dom-crawler",
@@ -1153,7 +1211,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-22T10:48:49+00:00"
+            "time": "2018-02-22 10:48:49"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1212,7 +1270,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-01-30T19:27:44+00:00"
+            "time": "2018-01-30 19:27:44"
         }
     ],
     "packages-dev": [],

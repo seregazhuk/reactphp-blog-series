@@ -4,6 +4,7 @@ require '../vendor/autoload.php';
 
 use Clue\React\Buzz\Browser;
 use React\EventLoop\LoopInterface;
+use React\Promise\Promise;
 use Symfony\Component\DomCrawler\Crawler;
 
 class Parser
@@ -29,17 +30,21 @@ class Parser
         $this->loop = $loop;
     }
 
-    public function parse(array $urls = [], $timeout = 5)
+    public function parse(array $urls = [], $timeout = 5, $concurrencyLimit = 1)
     {
-        foreach ($urls as $url) {
-             $promise = $this->client->get($url)->then(
-                function (\Psr\Http\Message\ResponseInterface $response) {
-                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
-                });
+        $queue = $this->initQueue($concurrencyLimit);
 
-             $this->loop->addTimer($timeout, function() use ($promise) {
-                 $promise->cancel();
-             });
+        foreach ($urls as $url) {
+            /** @var Promise $promise */
+            $promise = $queue($url)->then(
+                function (\Psr\Http\Message\ResponseInterface $response) {
+                    $this->parsed[] = $this->extractFromHtml((string)$response->getBody());
+                }
+            );
+
+            $this->loop->addTimer($timeout, function () use ($promise) {
+                $promise->cancel();
+            });
         }
     }
 
@@ -73,6 +78,19 @@ class Parser
     {
         return $this->parsed;
     }
+
+    /**
+     * @param int $concurrencyLimit
+     * @return \Clue\React\Mq\Queue
+     */
+    protected function initQueue($concurrencyLimit)
+    {
+        $queue = new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
+            echo 'call' . PHP_EOL;
+            return $this->client->get($url);
+        });
+        return $queue;
+    }
 }
 
 
@@ -83,7 +101,7 @@ $parser = new Parser($client, $loop);
 $parser->parse([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
-], 2);
+], 20, 1);
 
 $loop->run();
 print_r($parser->getMovieData());
