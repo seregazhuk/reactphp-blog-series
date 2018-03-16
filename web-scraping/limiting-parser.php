@@ -85,11 +85,9 @@ class Parser
      */
     protected function initQueue($concurrencyLimit)
     {
-        $queue = new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
-            echo 'call' . PHP_EOL;
+        return new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
             return $this->client->get($url);
         });
-        return $queue;
     }
 }
 
