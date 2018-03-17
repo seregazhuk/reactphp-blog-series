@@ -83,7 +83,8 @@ $parser = new Parser($client, $loop);
 $parser->parse([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
-], 2);
+    // ...
+], 2, 10);
 
 $loop->run();
 print_r($parser->getMovieData());

@@ -30,7 +30,7 @@ class Parser
         $this->loop = $loop;
     }
 
-    public function parse(array $urls = [], $timeout = 5, $concurrencyLimit = 1)
+    public function parse(array $urls = [], $timeout = 5, $concurrencyLimit = 10)
     {
         $queue = $this->initQueue($concurrencyLimit);
 
