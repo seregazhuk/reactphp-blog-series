@@ -11,17 +11,17 @@ class Parser
     /**
      * @var Browser
      */
-    private $client;
+    protected $client;
 
     /**
      * @var array
      */
-    private $parsed = [];
+    protected $parsed = [];
 
     /**
      * @var LoopInterface
      */
-    private $loop;
+    protected $loop;
 
     public function __construct(Browser $client, LoopInterface $loop)
     {
