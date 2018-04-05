@@ -1,8 +1,8 @@
 <?php
 
-require '../vendor/autoload.php';
+use React\EventLoop\TimerInterface;
 
-use \React\EventLoop\Timer\TimerInterface;
+require '../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
 $counter = 0;
