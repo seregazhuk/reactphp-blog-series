@@ -15,7 +15,7 @@ $wc->start($loop);
 $ls->stdout->pipe($wc->stdin);
 
 $wc->stdout->on('data', function($data){
-    echo "Total number of files and folders: " . $data;
+    echo 'Total number of files and folders: ' . $data;
 });
 
 $loop->run();
