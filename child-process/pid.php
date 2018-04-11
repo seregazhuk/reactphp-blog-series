@@ -9,7 +9,7 @@ $loop = Factory::create();
 $process = new Process('ping 8.8.8.8');
 
 $process->start($loop);
-$process->stdout->on('data', function($data) use ($loop) {
+$process->stdout->on('data', function($data) {
     echo $data;
 });
 

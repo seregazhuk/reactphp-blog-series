@@ -9,7 +9,7 @@ $loop = Factory::create();
 $process = new Process('php -a');
 
 $process->start($loop);
-$process->stdout->on('data', function($data) use ($loop) {
+$process->stdout->on('data', function($data) {
     echo $data;
 });
 
