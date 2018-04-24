@@ -11,7 +11,7 @@ $resolve = $dns->resolve('php.net')
         echo "php.net: $ip\n";
     })
     ->otherwise(function (\React\Dns\RecordNotFoundException $e) {
-        echo "Cannot resolve: " . $e->getMessage();
+        echo 'Cannot resolve: ' . $e->getMessage();
     });
 
 $loop->run();
