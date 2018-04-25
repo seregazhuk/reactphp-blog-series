@@ -7,17 +7,17 @@ use React\Socket\ConnectionInterface;
 class Output {
     public static function warning($message)
     {
-        return self::getColoredMessage("01;31", $message);
+        return self::getColoredMessage('01;31', $message);
     }
 
     public static function info($message)
     {
-        return self::getColoredMessage("0;32", $message);
+        return self::getColoredMessage('0;32', $message);
     }
 
     public static function message($name, $text)
     {
-        $name = self::getColoredMessage("0;36", $name);
+        $name = self::getColoredMessage('0;36', $name);
         return "$name: $text";
     }
 
@@ -44,7 +44,7 @@ class ConnectionsPool {
 
     public function add(ConnectionInterface $connection)
     {
-        $connection->write("Enter your name: ");
+        $connection->write('Enter your name: ');
         $this->initEvents($connection);
         $this->setConnectionData($connection, []);
     }
@@ -93,11 +93,11 @@ class ConnectionsPool {
 
     protected function addNewMember($name, ConnectionInterface $connection)
     {
-        $name = str_replace(["\n", "\r"], "", $name);
+        $name = str_replace(["\n", "\r"], '', $name);
 
         if(!$this->checkIsUniqueName($name)) {
             $connection->write(Output::warning("Name $name is already taken!") . "\n");
-            $connection->write("Enter your name: ");
+            $connection->write('Enter your name: ');
             return;
         }
 

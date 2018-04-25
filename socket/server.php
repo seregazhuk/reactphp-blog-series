@@ -16,7 +16,7 @@ class ConnectionsPool {
 
     public function add(ConnectionInterface $connection)
     {
-        $connection->write("Enter your name: ");
+        $connection->write('Enter your name: ');
         $this->initEvents($connection);
         $this->setConnectionData($connection, []);
     }
@@ -54,7 +54,7 @@ class ConnectionsPool {
 
     protected function addNewMember($name, $connection)
     {
-        $name = str_replace(["\n", "\r"], "", $name);
+        $name = str_replace(["\n", "\r"], '', $name);
         $this->setConnectionData($connection, ['name' => $name]);
         $this->sendAll("User $name joins the chat\n", $connection);
     }
