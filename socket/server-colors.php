@@ -85,7 +85,9 @@ class ConnectionsPool {
         foreach ($this->connections as $obj) {
             $data = $this->connections->offsetGet($obj);
             $takenName = $data['name'] ?? '';
-            if($takenName == $name) return false;
+            if ($takenName === $name) {
+                return false;
+            }
         }
 
         return true;
@@ -124,7 +126,9 @@ class ConnectionsPool {
      */
     protected function sendAll($data, ConnectionInterface $except) {
         foreach ($this->connections as $conn) {
-            if ($conn != $except) $conn->write($data);
+            if ($conn !== $except) {
+                $conn->write($data);
+            }
         }
     }
 }

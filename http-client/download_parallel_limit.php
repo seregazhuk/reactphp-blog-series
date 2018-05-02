@@ -78,12 +78,14 @@ class Downloader
         $fileName = basename($url);
 
         $file = new WritableResourceStream(fopen($fileName, 'w'), $this->loop);
-        $request->on('response', function (Response $response) use ($file, $fileName) {
+        $request->on('response', function (Response $response) use ($file) {
             $response->pipe($file);
 
-            $response->on('end', function () use ($fileName) {
+            $response->on('end', function () {
                 $this->bar->advance();
-                if ($this->files) $this->runDownload();
+                if ($this->files) {
+                    $this->runDownload();
+                }
             });
         });
 
