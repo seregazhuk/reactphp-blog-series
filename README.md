@@ -15,6 +15,7 @@ Code examples for [ReactPHP blog series](http://sergeyzhuk.me/2017/06/06/phpreac
 - [HTTP Server Middleware](http://sergeyzhuk.me/2017/12/20/reactphp-http-middleware/)
 - [Managing ReactPHP Promises](http://sergeyzhuk.me/2018/01/16/reactphp-managing-promises/)
 - [Fast Web Scraping](http://sergeyzhuk.me/2018/02/12/fast-webscraping-with-reactphp/)
+- [Fast Web Scraping With ReactPHP. Part 2: Throttling Requests](http://sergeyzhuk.me/2018/03/19/fast-webscraping-with-reactphp-limiting-requests/)
 - [Working With Filesystem](http://sergeyzhuk.me/2018/02/27/reactphp-filesystem/)
 - [Using Router With ReactPHP Http Component](http://sergeyzhuk.me/2018/03/13/using-router-with-reactphp-http/)
 - [Sending Email Asynchronously With ReactPHP Child Processes](http://sergeyzhuk.me/2018/05/04/reactphp-child-processes/)
