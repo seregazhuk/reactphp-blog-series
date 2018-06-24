@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e4c865d63c6ea5f40b39a3afdbed305",
+    "content-hash": "3d6626d4e03fffcd2903c44c1fa8789b",
     "packages": [
         {
             "name": "clue/block-react",
@@ -173,6 +173,61 @@
                 "worker"
             ],
             "time": "2018-04-30T09:46:20+00:00"
+        },
+        {
+            "name": "clue/socks-react",
+            "version": "v0.8.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/clue/php-socks-react.git",
+                "reference": "0fcd6f2f506918ff003f1b995c6e78443f26e8ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/clue/php-socks-react/zipball/0fcd6f2f506918ff003f1b995c6e78443f26e8ea",
+                "reference": "0fcd6f2f506918ff003f1b995c6e78443f26e8ea",
+                "shasum": ""
+            },
+            "require": {
+                "evenement/evenement": "~3.0|~1.0|~2.0",
+                "php": ">=5.3",
+                "react/promise": "^2.1 || ^1.2",
+                "react/socket": "^1.0 || ^0.8.6"
+            },
+            "require-dev": {
+                "clue/block-react": "^1.1",
+                "clue/connection-manager-extra": "^1.0 || ^0.7",
+                "phpunit/phpunit": "^6.0 || ^5.7 || ^4.8.35",
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Clue\\React\\Socks\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Lück",
+                    "email": "christian@lueck.tv"
+                }
+            ],
+            "description": "Async SOCKS4, SOCKS4a and SOCKS5 proxy client and server implementation, built on top of ReactPHP",
+            "homepage": "https://github.com/clue/php-socks-react",
+            "keywords": [
+                "async",
+                "proxy",
+                "reactphp",
+                "socks client",
+                "socks protocol",
+                "socks server",
+                "tcp tunnel"
+            ],
+            "time": "2017-12-17T14:47:58+00:00"
         },
         {
             "name": "doctrine/lexer",
