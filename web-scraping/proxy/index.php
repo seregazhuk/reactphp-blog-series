@@ -1,7 +1,7 @@
 <?php
 
 require '../../vendor/autoload.php';
-require 'parser.php';
+require 'scraper.php';
 
 use Clue\React\Buzz\Browser;
 use React\Socket\Connector;
@@ -14,8 +14,8 @@ $connector = new Connector($loop, ['tcp' => $proxy]);
 
 $client = new Browser($loop, $connector);
 
-$parser = new Parser($client, $loop);
-$parser->parse([
+$parser = new Scraper($client, $loop);
+$parser->scrape([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
     // ...
@@ -23,3 +23,4 @@ $parser->parse([
 
 $loop->run();
 print_r($parser->getMovieData());
+print_r($parser->getErrors());

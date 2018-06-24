@@ -6,7 +6,7 @@ use Clue\React\Buzz\Browser;
 use React\EventLoop\LoopInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
-class Parser
+class Scraper
 {
     /**
      * @var Browser
@@ -19,6 +19,11 @@ class Parser
     private $parsed = [];
 
     /**
+     * @var array
+     */
+    private $errors = [];
+
+    /**
      * @var LoopInterface
      */
     private $loop;
@@ -29,20 +34,23 @@ class Parser
         $this->loop = $loop;
     }
 
-    public function parse(array $urls = [], $timeout = 5)
+    public function scrape(array $urls = [], $timeout = 5)
     {
+        $this->parsed = [];
+        $this->errors = [];
+
         foreach ($urls as $url) {
             $promise = $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
                     $this->parsed[] = $this->extractFromHtml((string)$response->getBody());
-                }
-            );
-
-            $this->loop->addTimer(
-                $timeout, function () use ($promise) {
-                $promise->cancel();
+                }, function (Exception $exception) use ($url) {
+                $this->errors[$url] = $exception->getMessage();
             }
             );
+
+            $this->loop->addTimer($timeout, function () use ($promise) {
+                $promise->cancel();
+            });
         }
     }
 
@@ -75,5 +83,10 @@ class Parser
     public function getMovieData()
     {
         return $this->parsed;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }
