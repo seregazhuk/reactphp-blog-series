@@ -4,7 +4,7 @@ use React\EventLoop\Factory;
 use React\Filesystem\Filesystem;
 use React\Filesystem\Node\FileInterface;
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 $loop = Factory::create();
 $filesystem = Filesystem::create($loop);

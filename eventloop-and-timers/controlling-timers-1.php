@@ -2,7 +2,7 @@
 
 use React\EventLoop\TimerInterface;
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
 $counter = 0;

@@ -1,6 +1,6 @@
 <?php
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $cache = new React\Cache\ArrayCache();
 $cache->set('foo', 'bar');

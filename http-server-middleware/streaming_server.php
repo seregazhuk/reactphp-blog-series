@@ -1,6 +1,6 @@
 <?php
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;

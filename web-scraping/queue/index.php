@@ -2,7 +2,7 @@
 
 use Clue\React\Buzz\Browser;
 
-require '../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 require 'queueable-parser.php';
 
 $loop = React\EventLoop\Factory::create();

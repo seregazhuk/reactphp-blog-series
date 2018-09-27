@@ -1,5 +1,5 @@
 <?php
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use React\Http\Middleware\RequestBodyBufferMiddleware;
 use React\Http\Response;

@@ -2,7 +2,7 @@
 
 use React\EventLoop\LoopInterface;
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $eventLoop = \React\EventLoop\Factory::create();
 $count = 0;

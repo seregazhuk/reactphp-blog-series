@@ -1,6 +1,6 @@
 <?php
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $loop = \React\EventLoop\Factory::create();
 $stream = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
