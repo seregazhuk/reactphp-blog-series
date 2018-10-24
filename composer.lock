@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b80c4c03f18f1fee1d5b646d15f62b0d",
+    "content-hash": "71244958d38bcb307dbd6a5de62effbb",
     "packages": [
         {
             "name": "cakephp/core",
@@ -1273,6 +1273,50 @@
             "time": "2018-04-10T11:38:54+00:00"
         },
         {
+            "name": "react/mysql",
+            "version": "v0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/friends-of-reactphp/mysql.git",
+                "reference": "7433b7e6552342c92b1bbac8ff997deeb135737b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/friends-of-reactphp/mysql/zipball/7433b7e6552342c92b1bbac8ff997deeb135737b",
+                "reference": "7433b7e6552342c92b1bbac8ff997deeb135737b",
+                "shasum": ""
+            },
+            "require": {
+                "evenement/evenement": "^3.0 || ^2.1 || ^1.1",
+                "php": ">=5.4.0",
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4",
+                "react/promise": "^2.7",
+                "react/socket": "^1.0 || ^0.8"
+            },
+            "require-dev": {
+                "clue/block-react": "^1.2",
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\MySQL\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Async MySQL database client for ReactPHP.",
+            "keywords": [
+                "async",
+                "database",
+                "mysql",
+                "reactphp"
+            ],
+            "time": "2018-09-21T15:18:26+00:00"
+        },
+        {
             "name": "react/promise",
             "version": "v2.7.0",
             "source": {
@@ -1700,6 +1744,68 @@
                 "react"
             ],
             "time": "2018-04-29T21:00:07+00:00"
+        },
+        {
+            "name": "recoil/recoil",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/recoilphp/recoil.git",
+                "reference": "4b6ef1bac619910b21edb3bda6a7b16502b6889a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/recoilphp/recoil/zipball/4b6ef1bac619910b21edb3bda6a7b16502b6889a",
+                "reference": "4b6ef1bac619910b21edb3bda6a7b16502b6889a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7",
+                "recoil/api": "^1",
+                "recoil/kernel": "^1"
+            },
+            "require-dev": {
+                "eloquent/phony": "^2",
+                "friendsofphp/php-cs-fixer": "^2",
+                "peridot-php/leo": "^1",
+                "peridot-php/peridot": "^1",
+                "peridot-php/peridot-code-coverage-reporters": "^2",
+                "react/dns": "^0.4",
+                "recoil/dev": "^0.3",
+                "recoil/react": "^1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Recoil\\ReferenceKernel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Harris",
+                    "email": "james.harris@icecave.com.au",
+                    "homepage": "https://github.com/jmalloc"
+                }
+            ],
+            "description": "Asynchronous coroutines for PHP 7.",
+            "homepage": "https://github.com/recoilphp/recoil",
+            "keywords": [
+                "Thread",
+                "async",
+                "asynchronous",
+                "continuation",
+                "coroutine",
+                "event",
+                "generator",
+                "green",
+                "multitasking",
+                "react"
+            ],
+            "time": "2018-04-05T21:43:59+00:00"
         },
         {
             "name": "ringcentral/psr7",
