@@ -2,133 +2,85 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use React\Filesystem\Filesystem;
+use React\Filesystem\FilesystemInterface;
+use React\Filesystem\Stream\ReadableStream;
 use React\Http\Server;
 use React\Http\Response;
 use React\EventLoop\Factory;
-use React\EventLoop\LoopInterface;
-use React\Stream\ReadableResourceStream;
+use React\Promise\PromiseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class VideoStreaming
+final class VideoStreaming
 {
+    private $filesystem;
 
-    /**
-     * @var LoopInterface
-     */
-    protected $eventLoop;
-
-    /**
-     * @param LoopInterface $eventLoop
-     */
-    public function __construct(LoopInterface $eventLoop)
+    public function __construct(FilesystemInterface $filesystem)
     {
-        $this->eventLoop = $eventLoop;
+        $this->filesystem = $filesystem;
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @return Response
+     * @return Response|PromiseInterface
      */
     function __invoke(ServerRequestInterface $request)
     {
-        $file = $this->getFilePath($request);
-        if (empty($file)) {
+        $filePath = $this->getFilePath($request);
+
+        if ($filePath === null) {
             return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
         }
 
-        return $this->makeResponseFromFile($file);
+        return $this->makeResponseFromFile($filePath);
     }
 
     /**
      * @param string $filePath
-     * @return Response
+     * @return PromiseInterface
      */
-    protected function makeResponseFromFile($filePath)
+    private function makeResponseFromFile($filePath)
     {
-        @$file = fopen($filePath, 'r');
-        if (!$file) {
-            return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
-        }
+        $file = $this->filesystem->file($filePath);
 
-        $stream = new ReadableResourceStream($file, $this->eventLoop);
-
-        return new Response(200, ['Content-Type' => $this->getMimeTypeByExtension($filePath)], $stream);
+        return $file->exists()->then(
+            function () use ($file) {
+                return $file->open('r')->then(
+                    function (ReadableStream $stream) {
+                        return new Response(200, ['Content-Type' => 'video/mp4'], $stream);
+                    }
+                );
+            }, function () {
+            return new Response(404, ['Content-Type' => 'text/plain'], "This video doesn't exist on server.");
+        });
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @return string
-     */
-    protected function getFilePath(ServerRequestInterface $request)
-    {
-        $file = $request->getQueryParams()['file'] ?? '';
-
-        if (empty($file)) return '';
-
-        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
-    }
-
-    /**
-     * @param string $filename
      * @return string|null
      */
-    protected function getMimeTypeByExtension($filename) {
-        $types = [
-            '.afl' => 'video/animaflex',
-            '.asf' => 'video/x-ms-asf',
-            '.asx' => 'video/x-ms-asf',
-            '.avi' => 'video/avi',
-            '.avs' => 'video/avs-video',
-            '.dif' => 'video/x-dv',
-            '.dl' => 'video/dl',
-            '.dv' => 'video/x-dv',
-            '.fli' => 'video/fli',
-            '.fmf' => 'video/x-atomic3d-feature',
-            '.gl' => 'video/gl',
-            '.isu' => 'video/x-isvideo',
-            '.m1v' => 'video/mpeg',
-            '.m2a' => 'audio/mpeg',
-            '.m2v' => 'video/mpeg',
-            '.mjpg' => 'video/x-motion-jpeg',
-            '.moov' => 'video/quicktime',
-            '.mov' => 'video/quicktime',
-            '.movie' => 'video/x-sgi-movie',
-            '.mp2' => 'video/mpeg',
-            '.mp3' => 'video/mpeg',
-            '.mp4' => 'video/mpeg',
-            '.mpa' => 'audio/mpeg',
-            '.mpe' => 'video/mpeg',
-            '.mpeg' => 'video/mpeg',
-            '.mpg' => 'audio/mpeg',
-            '.mv' => 'video/x-sgi-movie',
-            '.qt' => 'video/quicktime',
-            '.qtc' => 'video/x-qtc',
-            '.rv' => 'video/vnd.rn-realvideo',
-            '.scm' => 'video/x-scm',
-            '.vdo' => 'video/vdo',
-            '.viv' => 'video/vivo',
-            '.vivo' => 'video/vivo',
-            '.vos' => 'video/vosaic',
-            '.xsr' => 'video/x-amt-showrun',
-        ];
+    private function getFilePath(ServerRequestInterface $request)
+    {
+        $file = $request->getQueryParams()['video'] ?? null;
 
-        foreach ($types as $extension => $type) {
-            if(substr($filename, -strlen($extension)) === $extension) {
-                return $type;
-            }
+        if ($file === null) {
+            return null;
         }
 
-        return null;
+        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     }
 }
 
 $loop = Factory::create();
 
-$videoStreaming = new VideoStreaming($loop);
+$videoStreaming = new VideoStreaming(Filesystem::create($loop));
 $server = new Server($videoStreaming);
 
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
 $server->listen($socket);
 
 echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n";
+$server->on('error', function (Exception $exception) {
+    echo $exception->getMessage() . PHP_EOL;
+});
 $loop->run();
