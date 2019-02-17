@@ -33,8 +33,8 @@ final class JsonResponse extends Response
         return new self(400, ['error' => $error]);
     }
 
-    public static function notFound(): self
+    public static function notFound(string $error): self
     {
-        return new self(404);
+        return new self(404, ['error' => $error]);
     }
 }

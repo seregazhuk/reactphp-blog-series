@@ -3,29 +3,29 @@
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\UserNotFoundError;
+use App\Users;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
-use React\MySQL\QueryResult;
 
 final class DeleteUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request, string $id)
     {
-        return $this->db
-            ->query('DELETE FROM users WHERE id = ?', [$id])
+        return $this->users->delete($id)
             ->then(
-                function (QueryResult $result) {
-                    return $result->affectedRows
-                        ? JsonResponse::noContent()
-                        : JsonResponse::notFound();
+                function () {
+                    return JsonResponse::noContent();
+                },
+                function (UserNotFoundError $error) {
+                    return JsonResponse::notFound($error->getMessage());
                 }
-        );
+            );
     }
 }

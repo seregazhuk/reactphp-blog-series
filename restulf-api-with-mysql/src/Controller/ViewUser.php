@@ -3,27 +3,29 @@
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\UserNotFoundError;
+use App\Users;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
-use React\MySQL\QueryResult;
 
 final class ViewUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request, string $id)
     {
-        return $this->db
-            ->query('SELECT id, name, email FROM users WHERE id = ?', [$id])
-            ->then(function (QueryResult $result) {
-                return empty($result->resultRows)
-                    ? JsonResponse::notFound()
-                    : JsonResponse::ok($result->resultRows);
-            });
+        return $this->users->find($id)
+            ->then(
+                function (array $user) {
+                    return JsonResponse::ok($user);
+                },
+                function (UserNotFoundError $error) {
+                    return JsonResponse::notFound($error->getMessage());
+                }
+            );
     }
 }

@@ -9,14 +9,15 @@ require __DIR__ . '/vendor/autoload.php';
 
 $loop = \React\EventLoop\Factory::create();
 $factory = new Factory($loop);
-$db = $factory->createLazyConnection('root:@localhost/test');
+$db = $factory->createLazyConnection('root:@localhost/reactphp-users');
+$users = new \App\Users($db);
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($db));
-    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($db));
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
+    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($users));
+    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($users));
 });
 
 $server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {

@@ -3,24 +3,23 @@
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\Users;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
 
 final class ListUsers
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request)
     {
-        return $this->db->query('SELECT id, name, email FROM users ORDER BY id')
-            ->then(function (\React\MySQL\QueryResult $queryResult) {
-                return JsonResponse::ok($queryResult->resultRows);
-            }
-        );
+        return $this->users->all()
+            ->then(function(array $users) {
+                return JsonResponse::ok($users);
+            });
     }
 }

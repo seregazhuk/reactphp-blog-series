@@ -3,24 +3,26 @@
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\Users;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
 
 final class CreateUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request)
     {
         $user = json_decode((string) $request->getBody(), true);
+        $name = $user['name'] ?? '';
+        $email = $user['email'] ?? '';
 
-        return $this->db->query('INSERT INTO users(name, email) VALUES (?, ?)', $user)
+        return $this->users->create($name, $email)
             ->then(
                 function () {
                     return JsonResponse::created();
