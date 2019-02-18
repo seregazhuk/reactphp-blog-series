@@ -21,3 +21,5 @@ Code examples for [ReactPHP blog series](http://sergeyzhuk.me/2017/06/06/phpreac
 - [Working With Filesystem](http://sergeyzhuk.me/2018/02/27/reactphp-filesystem/)
 - [Using Router With ReactPHP Http Component](http://sergeyzhuk.me/2018/03/13/using-router-with-reactphp-http/)
 - [Sending Email Asynchronously With ReactPHP Child Processes](http://sergeyzhuk.me/2018/05/04/reactphp-child-processes/)
+- [Building a RESTful API Using ReactPHP and MySQL](https://sergeyzhuk.me/2019/02/18/restful-api-with-reactphp-and-mysql/)
+
