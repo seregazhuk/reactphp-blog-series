@@ -45,7 +45,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
         case FastRoute\Dispatcher::FOUND:
-            $params = $routeInfo[2] ?? [];
+            $params = $routeInfo[2];
             return $routeInfo[1]($request, ... array_values($params));
     }
 

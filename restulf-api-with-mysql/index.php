@@ -31,7 +31,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
         case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
             return new Response(405, ['Content-Type' => 'text/plain'],  'Method not allowed');
         case FastRoute\Dispatcher::FOUND:
-            $params = $routeInfo[2] ?? [];
+            $params = $routeInfo[2];
             return $routeInfo[1]($request, ... array_values($params));
     }
 });
