@@ -20,7 +20,7 @@ final class ScraperForImages
         $this->directory = $directory;
     }
 
-    public function scrape(array $urls)
+    public function scrape(string ...$urls)
     {
         foreach ($urls as $url) {
             $this->client->get($url)->then(
