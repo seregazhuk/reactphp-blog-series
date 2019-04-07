@@ -35,11 +35,10 @@ $viewTask = function (ServerRequestInterface $request, $taskId) use (&$tasks) {
     return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
 };
 
-
 $routes = new RouteCollector(new Std(), new GroupCountBased());
-$routes->addRoute('GET', '/tasks', $listTasks);
-$routes->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
-$routes->addRoute('POST', '/tasks', $addTask);
+$routes->get('/tasks', $listTasks);
+$routes->get('/tasks/{id:\d+}', $viewTask);
+$routes->post('/tasks', $addTask);
 
 $loop = Factory::create();
 
@@ -47,11 +46,9 @@ $server = new Server(new Router($routes));
 
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
 $server->listen($socket);
-$server->on(
-    'error', function (Exception $e) {
+$server->on('error', function (Exception $e) {
     echo $e->getMessage() . PHP_EOL;
-}
-);
+});
 
 echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n";
 

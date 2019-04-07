@@ -49,7 +49,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
             return $routeInfo[1]($request, ... array_values($params));
     }
 
-    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
+    throw new LogicException('Something wrong with routing');
 });
 
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
