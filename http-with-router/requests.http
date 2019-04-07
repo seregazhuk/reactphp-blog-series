@@ -1,0 +1,19 @@
+# List tasks
+
+GET http://127.0.0.1:8000/tasks
+
+###
+
+# Add a task
+POST http://127.0.0.1:8000/tasks
+Content-Type: application/x-www-form-urlencoded
+
+task="Go to store"
+
+###
+
+# Get a task
+GET http://127.0.0.1:8000/tasks/0
+
+###
+
