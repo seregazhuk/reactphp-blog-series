@@ -1,8 +1,11 @@
 <?php
 
+namespace App;
+
 use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 

@@ -1,5 +1,8 @@
 <?php
 
+use FastRoute\DataGenerator\GroupCountBased;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 use React\Http\Server;
@@ -12,29 +15,16 @@ $factory = new Factory($loop);
 $db = $factory->createLazyConnection('root:@localhost/reactphp-users');
 $users = new \App\Users($db);
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($users));
-    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($users));
-});
 
-$server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
-    $routeInfo = $dispatcher->dispatch(
-        $request->getMethod(), $request->getUri()->getPath()
-    );
+$routes = new RouteCollector(new Std(), new GroupCountBased());
 
-    switch ($routeInfo[0]) {
-        case FastRoute\Dispatcher::NOT_FOUND:
-            return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
-        case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-            return new Response(405, ['Content-Type' => 'text/plain'],  'Method not allowed');
-        case FastRoute\Dispatcher::FOUND:
-            $params = $routeInfo[2];
-            return $routeInfo[1]($request, ... array_values($params));
-    }
-});
+$routes->get('/users', new \App\Controller\ListUsers($users));
+$routes->post('/users', new \App\Controller\CreateUser($users));
+$routes->get('/users/{id}', new \App\Controller\ViewUser($users));
+$routes->put('/users/{id}', new \App\Controller\UpdateUser($users));
+$routes->delete('/users/{id}', new \App\Controller\DeleteUser($users));
+
+$server = new Server(new \App\Router($routes));
 
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
 
