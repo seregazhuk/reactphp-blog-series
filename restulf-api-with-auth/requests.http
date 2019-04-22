@@ -1,0 +1,49 @@
+# Login
+
+POST http://127.0.0.1:8000/login
+Content-Type: application/json
+
+{
+    "email": "jane@example.com"
+}
+
+> {% client.global.set("token", response.body.token); %}
+###
+
+# Get all users
+GET http://127.0.0.1:8000/users
+Authorization: Bearer {{token}}
+
+###
+
+# Create a user
+POST http://127.0.0.1:8000/users
+Content-Type: application/json
+
+{
+    "name": "Mike",
+    "email": "mike@exmaple.com"
+}
+
+###
+
+# Get a user
+GET http://127.0.0.1:8000/users/1
+
+###
+
+# Update a user's name
+PUT http://127.0.0.1:8000/users/1
+Content-Type: application/json
+
+{
+    "name": "New name"
+}
+
+###
+
+# Delete a user
+DELETE http://127.0.0.1:8000/users/1
+Content-Type: application/json
+
+###
