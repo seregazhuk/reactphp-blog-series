@@ -11,7 +11,7 @@ final class Guard
 
     private $authenticator;
 
-    public function __construct($routesPattern, JwtAuthenticator $authenticator)
+    public function __construct(string $routesPattern, JwtAuthenticator $authenticator)
     {
         $this->routesPattern = $routesPattern;
         $this->authenticator = $authenticator;

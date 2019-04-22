@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Auth\JwtAuthenticator;
 use App\JsonResponse;
+use App\UserNotFoundError;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class Login
@@ -17,9 +18,7 @@ final class Login
 
     public function __invoke(ServerRequestInterface $request)
     {
-        $params = json_decode((string) $request->getBody(), true);
-        $email = $params['email'] ?? '';
-
+        $email = $this->extractEmail($request);
         if ($email === null) {
             return JsonResponse::badRequest("Field 'email' is required");
         }
@@ -29,8 +28,15 @@ final class Login
                 function (string $token) {
                     return JsonResponse::ok(['token' => $token]);
                 },
-                function () {
+                function (UserNotFoundError $error) {
                     return JsonResponse::unauthorized();
                 });
+    }
+
+    private function extractEmail(ServerRequestInterface $request): ?string
+    {
+        $params = json_decode((string)$request->getBody(), true);
+
+        return $params['email'] ?? '';
     }
 }
